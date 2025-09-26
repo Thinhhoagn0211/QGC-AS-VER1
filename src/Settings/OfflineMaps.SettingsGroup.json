@@ -1,0 +1,49 @@
+{
+    "version":      1,
+    "fileType":  "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "minZoomLevelDownload",
+    "shortDesc": "Minimum zoom level for downloads.",
+    "type":             "Uint32",
+    "min":              1,
+    "max":              20,
+    "default":     13
+},
+{
+    "name":             "maxZoomLevelDownload",
+    "shortDesc": "Maximum zoom level for downloads.",
+    "type":             "Uint32",
+    "min":              1,
+    "max":              20,
+    "default":     19
+},
+{
+    "name":             "maxTilesForDownload",
+    "shortDesc": "Maximum number of tiles for download.",
+    "type":             "Uint32",
+    "default":     100000
+},
+{
+    "name":         "maxCacheDiskSize",
+    "shortDesc":    "Max disk cache",
+    "type":         "Uint32",
+    "units":        "MB",
+    "min":          1,
+    "max":          262144,
+    "default":      1024
+},
+{
+    "name":                 "maxCacheMemorySize",
+    "shortDesc":            "Max memory cache",
+    "type":                 "Uint32",
+    "units":                "MB",
+    "min":                  1,
+    "max":                  1024,
+    "default":              128,
+    "mobileDefault":        16,
+    "qgcRebootRequired":    true
+}
+]
+}
