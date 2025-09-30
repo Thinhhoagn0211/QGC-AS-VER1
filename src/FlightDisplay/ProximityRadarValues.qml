@@ -7,7 +7,7 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.12
+import QtQuick 2.4
 
 /// Object which exposes vehicle distanceSensors FactGroup information for use in UI
 QtObject {

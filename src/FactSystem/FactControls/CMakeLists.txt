@@ -6,6 +6,7 @@ add_custom_target(FactControlsQml
 	SOURCES
 		FactPanelController.h
 		AltitudeFactTextField.qml
+        FactCheckBoxSlider.qml
 		FactBitmask.qml
 		FactCheckBox.qml
 		FactComboBox.qml
@@ -15,9 +16,9 @@ add_custom_target(FactControlsQml
 		FactTextFieldRow.qml
 		FactTextFieldSlider.qml
 		FactValueSlider.qml
-		FactCheckBoxSlider.qml
-		LabelledFactComboBox.qml
-		LabelledFactTextField.qml
+        LabelledFactComboBox.qml
+        LabelledFactLabel.qml
+        LabelledFactTextField.qml
 )
 
 target_link_libraries(FactControls qgc)

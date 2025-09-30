@@ -7,16 +7,15 @@
  *
  ****************************************************************************/
 
-import QtQuick                  2.12
-import QtLocation               5.3
-import QtPositioning            5.3
-import QtGraphicalEffects       1.0
+import QtQuick 2.4
+import QtLocation 5.3
+import QtPositioning 5.3
 
-import QGroundControl               1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Vehicle       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.FlightDisplay 1.0
+import QGroundControl 1.0
+
+
+import QGroundControl.Controls  1.0
+import QGroundControl.FlightDisplay  1.0
 
 Item {
     id:             _root
@@ -70,7 +69,7 @@ Item {
                 x:                      (_sectorViewEllipsoid.width / 2) - (width / 2)
                 y:                      (_sectorViewEllipsoid.height / 2) - (height / 2)
                 text:                   proximityValues.rgRotationValueStrings[index]
-                font.family:            ScreenTools.demiboldFontFamily
+                font.bold:              true
                 visible:                !isNaN(proximityValues.rgRotationValues[index])
 
                 transform: Translate {

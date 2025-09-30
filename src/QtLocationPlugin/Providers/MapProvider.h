@@ -47,7 +47,7 @@ public:
 
     QUrl getTileURL(int x, int y, int zoom) const;
 
-    QString getImageFormat(QByteArrayView image) const;
+    QString getImageFormat(QByteArray image) const;
 
     // TODO: Download Random Tile And Use That Size Instead?
     quint32 getAverageSize() const { return _averageSize; }

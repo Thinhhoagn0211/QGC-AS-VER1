@@ -7,15 +7,14 @@
  *
  ****************************************************************************/
 
-import QtQml.Models 2.12
+import QtQml.Models 2.1
 
-import QGroundControl               1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.FlightDisplay 1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+import QGroundControl.FlightDisplay  1.0
 
 ToolStrip {
-    id:     _root
-    title:  qsTr("Fly")
+    id: _root
 
     signal displayPreFlightChecklist
 

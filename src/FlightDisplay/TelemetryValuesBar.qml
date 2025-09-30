@@ -7,69 +7,46 @@
  *
  ****************************************************************************/
 
-import QtQuick                      2.12
-import QtQuick.Layouts              1.12
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Vehicle       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Palette       1.0
+import QGroundControl 1.0
 
-Rectangle {
-    id:                 telemetryPanel
-    height:             telemetryLayout.height + (_toolsMargin * 2)
-    width:              telemetryLayout.width + (_toolsMargin * 2)
-    color:              qgcPal.window
-    radius:             ScreenTools.defaultFontPixelWidth / 2
 
-    property bool       bottomMode: true
+import QGroundControl.Controls  1.0
 
-    DeadMouseArea { anchors.fill: parent }
+
+Item {
+    id:             control
+    implicitWidth:  mainLayout.width + (_toolsMargin * 2)
+    implicitHeight: mainLayout.height + (_toolsMargin * 2)
+
+    property real extraWidth: 0 ///< Extra width to add to the background rectangle
+
+    property alias factValueGrid:           factValueGrid
+    property alias settingsGroup:           factValueGrid.settingsGroup
+    property alias specificVehicleForCard:  factValueGrid.specificVehicleForCard
+
+    Rectangle {
+        id:         backgroundRect
+        width:      control.width + extraWidth
+        height:     control.height
+        color:      qgcPal.window
+        radius:     ScreenTools.defaultFontPixelWidth / 2
+        opacity:    0.75
+    }
 
     ColumnLayout {
-        id:                 telemetryLayout
+        id:                 mainLayout
         anchors.margins:    _toolsMargin
         anchors.bottom:     parent.bottom
         anchors.left:       parent.left
 
-         RowLayout {
-            visible: mouseArea.containsMouse || valueArea.settingsUnlocked
+        RowLayout {
+            visible: factValueGrid.settingsUnlocked
 
             QGCColoredImage {
-                source:             "/res/layout-bottom.svg"
-                mipmap:             true
-                width:              ScreenTools.minTouchPixels * 0.75
-                height:             width
-                sourceSize.width:   width
-                color:              qgcPal.text
-                fillMode:           Image.PreserveAspectFit
-                visible:            !bottomMode
-
-                QGCMouseArea {
-                    fillItem:   parent
-                    onClicked:  bottomMode = true
-                }
-            }
-
-            QGCColoredImage {
-                source:             "/res/layout-right.svg"
-                mipmap:             true
-                width:              ScreenTools.minTouchPixels * 0.75
-                height:             width
-                sourceSize.width:   width
-                color:              qgcPal.text
-                fillMode:           Image.PreserveAspectFit
-                visible:            bottomMode
-
-                QGCMouseArea {
-                    fillItem:   parent
-                    onClicked:  bottomMode = false
-                }
-            }
-
-            QGCColoredImage {
-                source:             valueArea.settingsUnlocked ? "/res/LockOpen.svg" : "/res/pencil.svg"
+                source:             "qrc:/InstrumentValueIcons/lock-open.svg"
                 mipmap:             true
                 width:              ScreenTools.minTouchPixels * 0.75
                 height:             width
@@ -79,36 +56,36 @@ Rectangle {
 
                 QGCMouseArea {
                     anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape:  Qt.PointingHandCursor
-                    onClicked:    valueArea.settingsUnlocked = !valueArea.settingsUnlocked
-                }
-            }
-        }
-
-        QGCMouseArea {
-            id:                         mouseArea
-            x:                          telemetryLayout.x
-            y:                          telemetryLayout.y
-            width:                      telemetryLayout.width
-            height:                     telemetryLayout.height
-            hoverEnabled:               !ScreenTools.isMobile
-            propagateComposedEvents:    true
-
-            onClicked: {
-                if (ScreenTools.isMobile && !valueArea.settingsUnlocked) {
-                    valueArea.settingsUnlocked = true
-                    mouse.accepted = true
-                } else {
-                    mouse.accepted = false
+                    onClicked:    factValueGrid.settingsUnlocked = false
                 }
             }
         }
 
         HorizontalFactValueGrid {
-            id:                     valueArea
-            userSettingsGroup:      telemetryBarUserSettingsGroup
-            defaultSettingsGroup:   telemetryBarDefaultSettingsGroup
+            id: factValueGrid
+        }
+    }
+
+    QGCMouseArea {
+        id:                         mouseArea
+        x:                          mainLayout.x
+        y:                          mainLayout.y
+        width:                      mainLayout.width
+        height:                     mainLayout.height
+        acceptedButtons:            Qt.LeftButton | Qt.RightButton
+        propagateComposedEvents:    true
+        visible:                    !factValueGrid.settingsUnlocked
+
+        onClicked: (mouse) => {
+            if (!ScreenTools.isMobile && mouse.button === Qt.RightButton) {
+                factValueGrid.settingsUnlocked = true
+                mouse.accepted = true
+            }
+        }
+
+        onPressAndHold: {
+            factValueGrid.settingsUnlocked = true
+            mouse.accepted = true
         }
     }
 }

@@ -1,19 +1,17 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
 
-
-#ifndef LogDownloadController_H
-#define LogDownloadController_H
+#pragma once
 
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QObject>
-
+#include <QSaveFile>
 
 Q_DECLARE_LOGGING_CATEGORY(LogDownloadControllerLog)
 
@@ -28,10 +26,8 @@ class LogDownloadTest;
 class LogDownloadController : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
-    QML_SINGLETON
-    Q_MOC_INCLUDE("Vehicle.h")
-    Q_MOC_INCLUDE("QmlObjectListModel.h")
+    
+    
     Q_PROPERTY(QmlObjectListModel *model          READ _getModel            CONSTANT)
     Q_PROPERTY(bool               requestingList  READ _getRequestingList   NOTIFY requestingListChanged)
     Q_PROPERTY(bool               downloadingLogs READ _getDownloadingLogs  NOTIFY downloadingLogsChanged)
@@ -97,6 +93,3 @@ private:
     static constexpr uint32_t kGUIRateMs = 17; ///< 1000ms / 60fps
     static constexpr uint32_t kRequestLogListTimeoutMs = 5000;
 };
-
-
-#endif

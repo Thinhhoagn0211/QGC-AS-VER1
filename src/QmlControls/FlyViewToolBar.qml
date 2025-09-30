@@ -8,17 +8,15 @@
  ****************************************************************************/
 
 import QtQuick 2.15
-import QtQuick.Controls 2.4
-import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.2
 import QtQuick.Dialogs 1.2
 
 import QGroundControl 1.0
-import QGroundControl.Controls 1.0
 import QGroundControl.Palette 1.0
-import QGroundControl.MultiVehicleManager 1.0
-import QGroundControl.ScreenTools 1.0
-import QGroundControl.Controllers 1.0
-import QGroundControl.FactSystem 1.0
+import QGroundControl.Controls  1.0
+
+
 
 
 
@@ -50,6 +48,7 @@ Rectangle {
 
     Rectangle {
         anchors.fill: viewButtonRow
+        
         gradient: Gradient {
             orientation: Gradient.Horizontal
             GradientStop { position: 0;                                     color: _mainStatusBGColor }
@@ -68,7 +67,7 @@ Rectangle {
         QGCToolBarButton {
             id:                     currentButton
             Layout.preferredHeight: viewButtonRow.height
-            icon.source:            "/res/QGCLogoFull"
+            icon.source:            "/res/QGCLogoFull.svg"
             logo:                   true
             onClicked:              mainWindow.showToolSelectDialog()
         }

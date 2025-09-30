@@ -8,14 +8,15 @@
  ****************************************************************************/
 
 
-import QtQuick              2.3
-import QtQuick.Controls     1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
 
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
+
+import QGroundControl.Controls  1.0
+
 
 SetupPage {
     id:             tuningPage
@@ -30,7 +31,7 @@ SetupPage {
 
             FactPanelController { id: controller; }
 
-            QGCPalette { id: palette; colorGroupEnabled: true }
+            QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
             property real _margins: ScreenTools.defaultFontPixelHeight
 
@@ -65,7 +66,7 @@ SetupPage {
                 anchors.left:       parent.left
                 anchors.right:      parent.right
                 height:             posColumn.height + _margins*2
-                color:              palette.windowShade
+                color:              qgcPal.windowShade
 
                 Column {
                     id:                 posColumn
@@ -101,7 +102,7 @@ SetupPage {
                 anchors.left:       parent.left
                 anchors.right:      parent.right
                 height:             velColumn.height + _margins*2
-                color:              palette.windowShade
+                color:              qgcPal.windowShade
 
                 Component {
                     id: velColumnUpTo36
@@ -167,7 +168,7 @@ SetupPage {
                 anchors.left:       parent.left
                 anchors.right:      parent.right
                 height:             wpnavColumn.height + _margins*2
-                color:              palette.windowShade
+                color:              qgcPal.windowShade
 
                 // WPNAV parameters up to 3.5
                 Component {

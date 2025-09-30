@@ -1,51 +1,45 @@
-target_sources(${CMAKE_PROJECT_NAME}
-    PRIVATE
-        ImageProtocolManager.cc
-        ImageProtocolManager.h
-        MAVLinkFTP.cc
-        MAVLinkFTP.h
-        MAVLinkLib.h
-        MAVLinkSigning.cc
-        MAVLinkSigning.h
-        MAVLinkStreamConfig.cc
-        MAVLinkStreamConfig.h
-        QGCMAVLink.cc
-        QGCMAVLink.h
-        StatusTextHandler.cc
-        StatusTextHandler.h
-        SysStatusSensorInfo.cc
-        SysStatusSensorInfo.h
+add_library(MAVLink
+    ImageProtocolManager.cc
+    ImageProtocolManager.h
+    MAVLinkFTP.cc
+    MAVLinkFTP.h
+    MAVLinkLib.h
+    MAVLinkSigning.cc
+    MAVLinkSigning.h
+    MAVLinkStreamConfig.cc
+    MAVLinkStreamConfig.h
+    QGCMAVLink.cc
+    QGCMAVLink.h
+    StatusTextHandler.cc
+    StatusTextHandler.h
+    SysStatusSensorInfo.cc
+    SysStatusSensorInfo.h
 )
 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(MAVLink PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 #===========================================================================#
 
 message(STATUS "Building MAVLink")
 
-# TODO:
-# CPMAddPackage(
-#     NAME mavlink
-#     GITHUB_REPOSITORY ${QGC_MAVLINK_GIT_REPO}
-#     GIT_TAG ${QGC_MAVLINK_GIT_TAG}
-#     OPTIONS
-#         "MAVLINK_DIALECT all"
-#         "MAVLINK_VERSION 2.0"
-# )
 
-CPMAddPackage(
-    NAME mavlink
-    GIT_REPOSITORY ${QGC_MAVLINK_GIT_REPO}
-    GIT_TAG ${QGC_MAVLINK_GIT_TAG}
+target_link_libraries(MAVLink
+	PUBLIC
+		Qt5::Core
+		Qt5::Network
+        Qt5::Qml
+		qgc
 )
 
 # For QGC all dialects means common and development. Though use of development mavlink code should be restricted to debug builds only.
-target_include_directories(${CMAKE_PROJECT_NAME}
-    PRIVATE
+target_include_directories(MAVLink
+    PUBLIC
         ${mavlink_SOURCE_DIR}
         ${mavlink_SOURCE_DIR}/all
         ${mavlink_SOURCE_DIR}/common
+        ${mavlink_SOURCE_DIR}/minimal
         ${mavlink_SOURCE_DIR}/development
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

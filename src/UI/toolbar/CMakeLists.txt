@@ -1,0 +1,21 @@
+add_custom_target(UiToolbarQml
+	SOURCES
+        APMBatteryIndicator.qml
+        APMFlightModeIndicator.qml
+        APMMainStatusIndicatorContentItem.qml
+        APMSupportForwardingIndicator.qml
+        ArmedIndicator.qml
+        EscIndicator.qml
+        EscIndicatorPage.qml
+        GCSControlIndicator.qml
+        GimbalIndicator.qml
+        JoystickIndicator.qml
+        LinkIndicator.qml
+        ModeIndicator.qml
+        MultiVehicleSelector.qml
+        RCRSSIIndicator.qml
+        RemoteIDIndicator.qml
+        RTKGPSIndicator.qml
+        TelemetryRSSIIndicator.qml
+        VehicleGPSIndicator.qml
+)

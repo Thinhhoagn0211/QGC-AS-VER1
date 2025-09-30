@@ -8,17 +8,18 @@
  ****************************************************************************/
 
 
-import QtQuick          2.3
-import QtQuick.Controls 1.2
-import QtQuick.Dialogs  1.2
-import QtQuick.Layouts  1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ScreenTools   1.0
+
+import QGroundControl.Controls  1.0
+
+
 
 SetupPage {
     id:             airframePage
@@ -73,7 +74,7 @@ SetupPage {
                                          (_frameTypeAvailable ?  qsTr(" and frame type '%2'").arg(_frameType.enumStringValue) : "") +
                                          qsTr(".", "period for end of sentence")) +
                                     qsTr(" To change this configuration, select the desired frame class below and then reboot the vehicle.")
-                font.family:        ScreenTools.demiboldFontFamily
+                font.bold:          true
                 wrapMode:           Text.WordWrap
             }
 
@@ -88,7 +89,7 @@ SetupPage {
                 Layout.fillWidth:   true
                 spacing:            _boxSpace
 
-                ExclusiveGroup {
+                ButtonGroup {
                     id: airframeTypeExclusive
                 }
 
@@ -152,7 +153,7 @@ SetupPage {
                                     // Although this item is invisible we still use it to manage state
                                     id:             airframeCheckBox
                                     checked:        object.frameClass === _frameClass.rawValue
-                                    exclusiveGroup: airframeTypeExclusive
+                                    buttonGroup: airframeTypeExclusive
                                     visible:        false
 
                                     onCheckedChanged: {
@@ -174,7 +175,7 @@ SetupPage {
                                     Layout.fillWidth:   true
                                     model:              object.frameTypeEnumStrings
                                     visible:            airframeCheckBox.checked && object.frameTypeSupported
-                                    onActivated:        _frameType.rawValue = object.frameTypeEnumValues[index]
+                                    onActivated: (index) => { _frameType.rawValue = object.frameTypeEnumValues[index] }
 
                                     property bool valid: true
 
@@ -198,7 +199,7 @@ SetupPage {
                                     Connections {
                                         target:                 _frameTypeAvailable ? _frameType : null
                                         ignoreUnknownSignals:   true
-                                        onRawValueChanged:      combo.selectFrameType()
+                                        function onRawValueChanged(value) { combo.selectFrameType() }
                                     }
                                 }
                             }

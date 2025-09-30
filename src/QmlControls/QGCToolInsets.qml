@@ -7,7 +7,7 @@
  *
  ****************************************************************************/
 
-import QtQuick  2.12
+import QtQuick 2.4
 
 QtObject {
     property real leftEdgeCenterInset:  0

@@ -1,9 +1,10 @@
-import QtQuick 2.12
-import QtQuick.Controls 1.2
-import QtQuick.Layouts 1.3
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
 
 Column {
     property var channel
@@ -37,11 +38,11 @@ Column {
     QGCSlider {
         id:                         channelSlider
         orientation:                Qt.Vertical
-        minimumValue:               snap ? channel.min - snapRange : channel.min
-        maximumValue:               channel.max
+        from:               snap ? channel.min - snapRange : channel.min
+        to:               channel.max
         stepSize:                   (channel.max-channel.min)/100
         value:                      defaultVal
-        updateValueWhileDragging:   true
+        live:   true
         anchors.horizontalCenter:   parent.horizontalCenter
         height:                     ScreenTools.defaultFontPixelHeight * _sliderHeight
         indicatorBarVisible:        sendTimer.running

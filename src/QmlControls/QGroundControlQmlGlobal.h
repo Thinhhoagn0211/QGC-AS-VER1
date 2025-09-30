@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -33,29 +33,10 @@ class VideoManager;
 class UTMSPManager;
 class AirLinkManager;
 
-Q_MOC_INCLUDE("ADSBVehicleManager.h")
-Q_MOC_INCLUDE("FactGroup.h")
-Q_MOC_INCLUDE("LinkManager.h")
-Q_MOC_INCLUDE("MissionCommandTree.h")
-Q_MOC_INCLUDE("MultiVehicleManager.h")
-Q_MOC_INCLUDE("QGCCorePlugin.h")
-Q_MOC_INCLUDE("QGCMapEngineManager.h")
-Q_MOC_INCLUDE("QGCPalette.h")
-Q_MOC_INCLUDE("PositionManager.h")
-Q_MOC_INCLUDE("SettingsManager.h")
-Q_MOC_INCLUDE("VideoManager.h")
-#ifdef QGC_UTM_ADAPTER
-Q_MOC_INCLUDE("UTMSPManager.h")
-#endif
-#ifndef QGC_AIRLINK_DISABLED
-Q_MOC_INCLUDE("AirLinkManager.h")
-#endif
 
 class QGroundControlQmlGlobal : public QObject
 {
     Q_OBJECT
-    QML_NAMED_ELEMENT(QGroundControl)
-    QML_SINGLETON
 
 public:
     explicit QGroundControlQmlGlobal(QObject *parent = nullptr);
@@ -223,7 +204,8 @@ public:
     QString telemetryFileExtension  (void) const;
 
     static QString qgcVersion();
-    static QString qgcAppDate() { return QGC_APP_DATE; }
+    // static QString qgcAppDate() { return QGC_APP_DATE; }
+    static QString qgcAppDate() { return "QGC_APP_DATE"; }
 #ifdef QGC_DAILY_BUILD
     static bool qgcDailyBuild() { return true; }
 #else

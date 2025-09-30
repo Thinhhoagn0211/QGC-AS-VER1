@@ -8,18 +8,18 @@
  ****************************************************************************/
 
 
-import QtQuick          2.3
-import QtQuick.Controls 1.2
-import QtQuick.Dialogs  1.2
-import QtQuick.Layouts  1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Controllers   1.0
+
+import QGroundControl.Controls  1.0
+
+
 
 SetupPage {
     id:                 subFramePage
@@ -63,7 +63,7 @@ SetupPage {
             id:     mainColumn
             width:  availableWidth
 
-            QGCPalette { id: palette; colorGroupEnabled: true }
+            QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
             property real _minW:        ScreenTools.defaultFontPixelWidth * 30
             property real _boxWidth:    _minW
@@ -200,7 +200,7 @@ SetupPage {
         QGCPopupDialog {
             id:         confirmFrameDialog
             title:      qsTr("Frame selection")
-            buttons:    StandardButton.Close
+            buttons:    Dialog.Close
 
             ColumnLayout {
                 QGCLabel {

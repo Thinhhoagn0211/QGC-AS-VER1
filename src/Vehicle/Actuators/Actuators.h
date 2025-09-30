@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2021 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,16 +9,16 @@
 
 #pragma once
 
-#include <QObject>
-#include <QString>
-#include <QJsonDocument>
-
 #include "ActuatorOutputs.h"
 #include "ActuatorTesting.h"
 #include "Mixer.h"
-#include "GeometryImage.h"
 #include "MotorAssignment.h"
+#include <QSizeF>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QJsonDocument>
 
+class Vehicle;
 
 class Actuators : public QObject
 {
@@ -40,7 +40,7 @@ public:
     Q_PROPERTY(Mixer::Mixers* mixer                                             READ mixer                     CONSTANT)
     Q_PROPERTY(ActuatorOutputs::ActuatorOutput* selectedActuatorOutput          READ selectedActuatorOutput    NOTIFY selectedActuatorOutputChanged)
 
-    Q_INVOKABLE void imageClicked(float x, float y);
+    Q_INVOKABLE void imageClicked(QSizeF displaySize, float x, float y);
 
     Q_INVOKABLE void selectActuatorOutput(int index);
 
@@ -120,7 +120,7 @@ private:
     bool _motorAssignmentEnabled{false};
     bool _hasUnsetRequiredFunctions{false};
     bool _imageRefreshFlag{false}; ///< indicator to QML to reload the image
-    int _selectedActuatorOutput{0};
+    int _selectedActuatorOutput{};
     Vehicle* _vehicle{nullptr};
     QMap<int, QString> _usedMixerLabels;
 };

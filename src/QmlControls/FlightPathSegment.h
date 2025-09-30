@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,12 +9,13 @@
 
 #pragma once
 
-#include <QObject>
-#include <QGeoCoordinate>
-#include <QTimer>
+#include <QtCore/QLoggingCategory>
+#include <QtCore/QObject>
+#include <QtCore/QTimer>
+#include <QtPositioning/QGeoCoordinate>
+
 
 #include "TerrainQuery.h"
-#include "QGCLoggingCategory.h"
 
 Q_DECLARE_LOGGING_CATEGORY(FlightPathSegmentLog)
 
@@ -22,6 +23,7 @@ Q_DECLARE_LOGGING_CATEGORY(FlightPathSegmentLog)
 class FlightPathSegment : public QObject
 {
     Q_OBJECT
+    
     
 public:
     enum SegmentType {

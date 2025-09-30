@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,12 +9,11 @@
 
 #pragma once
 
-#include <QQuickItem>
-#include <QTimer>
-#include <QSGGeometryNode>
-#include <QSGGeometry>
+#include <QtCore/QLoggingCategory>
+#include <QtQuick/QQuickItem>
+#include <QtQuick/QSGGeometryNode>
+#include <QtQuick/QSGGeometry>
 
-#include "QGCLoggingCategory.h"
 
 Q_DECLARE_LOGGING_CATEGORY(TerrainProfileLog)
 
@@ -25,6 +24,7 @@ class FlightPathSegment;
 class TerrainProfile : public QQuickItem
 {
     Q_OBJECT
+    
 
 public:
     TerrainProfile(QQuickItem *parent = nullptr);

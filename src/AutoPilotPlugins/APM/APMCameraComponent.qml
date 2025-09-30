@@ -8,14 +8,15 @@
  ****************************************************************************/
 
 
-import QtQuick              2.3
-import QtQuick.Controls     1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
 
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
+
+import QGroundControl.Controls  1.0
+
 
 SetupPage {
     id:             cameraPage
@@ -30,7 +31,7 @@ SetupPage {
 
             FactPanelController { id: controller; }
 
-            QGCPalette { id: palette; colorGroupEnabled: true }
+            QGCPalette { id: qgcPal; colorGroupEnabled: true }
 
             property Fact _mountRetractX:       controller.getParameterFact(-1, "MNT_RETRACT_X")
             property Fact _mountRetractY:       controller.getParameterFact(-1, "MNT_RETRACT_Y")
@@ -141,16 +142,16 @@ SetupPage {
             }
 
             // Whenever any SERVO#_FUNCTION parameters changes we need to go looking for gimbal output channels again
-            Connections { target: _rc5Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc6Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc7Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc8Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc9Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc10Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc11Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc12Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc13Function; onValueChanged: calcGimbalOutValues() }
-            Connections { target: _rc14Function; onValueChanged: calcGimbalOutValues() }
+            Connections { target: _rc5Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc6Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc7Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc8Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc9Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc10Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc11Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc12Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc13Function; function onValueChanged(value) { calcGimbalOutValues() } }
+            Connections { target: _rc14Function; function onValueChanged(value) { calcGimbalOutValues() } }
 
             // Whenever an MNT_RC_IN_* setting is changed make sure to turn on RC targeting
             Connections {
@@ -190,8 +191,12 @@ SetupPage {
                     var baseValue = 8
                     // Extra outputs
                     // http://ardupilot.org/copter/docs/parameters.html#brd-pwm-count-auxiliary-pin-config
-                    var brd_pwm_count_value = controller.getParameterFact(-1, "BRD_PWM_COUNT").value
-                    update(8 + (brd_pwm_count_value == 7 ? 3 : brd_pwm_count_value))
+                    if (controller.parameterExists(-1, "BRD_PWM_COUNT")) {
+                        const brd_pwm_count_value = controller.getParameterFact(-1, "BRD_PWM_COUNT").value
+                        update(baseValue + (brd_pwm_count_value == 7 ? 3 : brd_pwm_count_value))
+                    } else {
+                        update(baseValue)
+                    }
                 }
             }
 
@@ -219,7 +224,7 @@ SetupPage {
                     QGCLabel {
                         id:         directionLabel
                         text:       qsTr("Gimbal ") + directionTitle
-                        font.family: ScreenTools.demiboldFontFamily
+                        font.bold:   true
                     }
 
                     Rectangle {
@@ -229,7 +234,7 @@ SetupPage {
                         anchors.top:        directionLabel.bottom
                         width:              mountAngMaxField.x + mountAngMaxField.width + _margins
                         height:             servoPWMMaxField.y + servoPWMMaxField.height + _margins
-                        color:              palette.windowShade
+                        color:              qgcPal.windowShade
 
                         FactCheckBox {
                             id:                 mountStabCheckBox
@@ -275,7 +280,7 @@ SetupPage {
                             textRole:           "text"
                             currentIndex:       gimbalOutIndex
 
-                            onActivated: setRCFunction(gimbalOutModel.get(index).value, rcFunction)
+                            onActivated: (index) => { setRCFunction(gimbalOutModel.get(index).value, rcFunction) }
                         }
 
                         QGCLabel {
@@ -404,7 +409,7 @@ SetupPage {
                     QGCLabel {
                         id:             settingsLabel
                         text:           qsTr("Gimbal Settings")
-                        font.family:    ScreenTools.demiboldFontFamily
+                        font.bold:      true
                     }
 
                     Rectangle {
@@ -413,7 +418,7 @@ SetupPage {
                         anchors.top:        settingsLabel.bottom
                         width:              gimbalModeCombo.x + gimbalModeCombo.width + _margins
                         height:             gimbalModeCombo.y + gimbalModeCombo.height + _margins
-                        color:              palette.windowShade
+                        color:              qgcPal.windowShade
 
                         QGCLabel {
                             id:                 gimbalTypeLabel

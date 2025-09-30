@@ -67,21 +67,21 @@ QStringList SysStatusSensorInfo::sensorNames() const
     QStringList rgNames;
 
     // List ordering is unhealthy, healthy, disabled
-    for (std::pair<MAV_SYS_STATUS_SENSOR, const SensorInfo&> sensorInfo : _sensorInfoMap.asKeyValueRange()) {
-        if (sensorInfo.second.enabled && !sensorInfo.second.healthy) {
-            rgNames.append(QGCMAVLink::mavSysStatusSensorToString(sensorInfo.first));
+    for (QMap<MAV_SYS_STATUS_SENSOR, SensorInfo>::const_iterator it = _sensorInfoMap.constBegin(); it != _sensorInfoMap.constEnd(); ++it) {
+        if (it.value().enabled && !it.value().healthy) {
+            rgNames.append(QGCMAVLink::mavSysStatusSensorToString(it.key()));
         }
     }
 
-    for (std::pair<MAV_SYS_STATUS_SENSOR, const SensorInfo&> sensorInfo : _sensorInfoMap.asKeyValueRange()) {
-        if (sensorInfo.second.enabled && sensorInfo.second.healthy) {
-            rgNames.append(QGCMAVLink::mavSysStatusSensorToString(sensorInfo.first));
+    for (QMap<MAV_SYS_STATUS_SENSOR, SensorInfo>::const_iterator it = _sensorInfoMap.constBegin(); it != _sensorInfoMap.constEnd(); ++it) {
+        if (it.value().enabled && it.value().healthy) {
+            rgNames.append(QGCMAVLink::mavSysStatusSensorToString(it.key()));
         }
     }
 
-    for (std::pair<MAV_SYS_STATUS_SENSOR, const SensorInfo&> sensorInfo : _sensorInfoMap.asKeyValueRange()) {
-        if (!sensorInfo.second.enabled) {
-            rgNames.append(QGCMAVLink::mavSysStatusSensorToString(sensorInfo.first));
+    for (QMap<MAV_SYS_STATUS_SENSOR, SensorInfo>::const_iterator it = _sensorInfoMap.constBegin(); it != _sensorInfoMap.constEnd(); ++it) {
+        if (!it.value().enabled) {
+            rgNames.append(QGCMAVLink::mavSysStatusSensorToString(it.key()));
         }
     }
 

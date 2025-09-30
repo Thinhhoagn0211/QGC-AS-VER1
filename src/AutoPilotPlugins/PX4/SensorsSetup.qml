@@ -7,19 +7,18 @@
  *
  ****************************************************************************/
 
-import QtQuick                  2.3
-import QtQuick.Controls         1.2
-import QtQuick.Controls.Styles  1.4
-import QtQuick.Dialogs          1.2
-import QtQuick.Layouts          1.15
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Controllers   1.0
+
+import QGroundControl.Controls  1.0
+
+
 
 /// Page for sensor calibration. This control is used within the SensorsComponent control and can also be used
 /// standalone for custom uis. When using standadalone you can use the various show* bools to show/hide what you want.
@@ -55,50 +54,6 @@ Item {
 
     // Used to pass help text to the preCalibrationDialog dialog
     property string preCalibrationDialogHelp
-
-    readonly property var rotations: [
-        "ROTATION_NONE",
-        "ROTATION_YAW_45",
-        "ROTATION_YAW_90",
-        "ROTATION_YAW_135",
-        "ROTATION_YAW_180",
-        "ROTATION_YAW_225",
-        "ROTATION_YAW_270",
-        "ROTATION_YAW_315",
-        "ROTATION_ROLL_180",
-        "ROTATION_ROLL_180_YAW_45",
-        "ROTATION_ROLL_180_YAW_90",
-        "ROTATION_ROLL_180_YAW_135",
-        "ROTATION_PITCH_180",
-        "ROTATION_ROLL_180_YAW_225",
-        "ROTATION_ROLL_180_YAW_270",
-        "ROTATION_ROLL_180_YAW_315",
-        "ROTATION_ROLL_90",
-        "ROTATION_ROLL_90_YAW_45",
-        "ROTATION_ROLL_90_YAW_90",
-        "ROTATION_ROLL_90_YAW_135",
-        "ROTATION_ROLL_270",
-        "ROTATION_ROLL_270_YAW_45",
-        "ROTATION_ROLL_270_YAW_90",
-        "ROTATION_ROLL_270_YAW_135",
-        "ROTATION_PITCH_90",
-        "ROTATION_PITCH_270",
-        "ROTATION_PITCH_180_YAW_90",
-        "ROTATION_PITCH_180_YAW_270",
-        "ROTATION_ROLL_90_PITCH_90",
-        "ROTATION_ROLL_180_PITCH_90",
-        "ROTATION_ROLL_270_PITCH_90",
-        "ROTATION_ROLL_90_PITCH_180",
-        "ROTATION_ROLL_270_PITCH_180",
-        "ROTATION_ROLL_90_PITCH_270",
-        "ROTATION_ROLL_180_PITCH_270",
-        "ROTATION_ROLL_270_PITCH_270",
-        "ROTATION_ROLL_90_PITCH_180_YAW_90",
-        "ROTATION_ROLL_90_YAW_270",
-        "ROTATION_ROLL_90_PITCH_68_YAW_293",
-        "ROTATION_PITCH_315",
-        "ROTATION_ROLL_90_PITCH_315"
-    ]
 
     property Fact cal_mag0_id:      controller.getParameterFact(-1, "CAL_MAG0_ID")
     property Fact cal_mag1_id:      controller.getParameterFact(-1, "CAL_MAG1_ID")
@@ -188,6 +143,8 @@ Item {
         }
     }
 
+    QGCPalette { id: qgcPal; colorGroupEnabled: true }
+
     SensorsComponentController {
         id:                         controller
         statusLog:                  statusTextArea
@@ -247,7 +204,7 @@ Item {
         id: preCalibrationDialogComponent
 
         QGCPopupDialog {
-            buttons: StandardButton.Cancel | StandardButton.Ok
+            buttons: Dialog.Cancel | Dialog.Ok
 
             onAccepted: {
                 if (preCalibrationDialogType == "gyro") {
@@ -290,7 +247,6 @@ Item {
 
                         FactComboBox {
                             sizeToContents: true
-                            model:          rotations
                             fact:           sens_board_rot
                         }
 
@@ -315,7 +271,7 @@ Item {
         id: setOrientationsDialogComponent
 
         QGCPopupDialog {
-            buttons: StandardButton.Ok
+            buttons: Dialog.Ok
 
             property bool showRebootVehicleButton: true
 
@@ -347,7 +303,6 @@ Item {
 
                     FactComboBox {
                         sizeToContents: true
-                        model:          rotations
                         fact:           sens_board_rot
                     }
                 }
@@ -368,7 +323,6 @@ Item {
 
                         FactComboBox {
                             sizeToContents: true
-                            model:          rotations
                             fact:           parent.calMagRotFact
                         }
                     }
@@ -518,13 +472,9 @@ Item {
                 width:          parent.calDisplayAreaWidth
                 height:         parent.height
                 readOnly:       true
-                frameVisible:   false
                 text:           statusTextAreaDefaultText
-
-                style: TextAreaStyle {
-                    textColor: qgcPal.text
-                    backgroundColor: qgcPal.windowShade
-                }
+                color:          qgcPal.text
+                background: Rectangle { color: qgcPal.windowShade }
             }
 
             Rectangle {

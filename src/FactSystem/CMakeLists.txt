@@ -1,45 +1,34 @@
 
 add_subdirectory(FactControls)
 
-set(EXTRA_SRC)
-if(BUILD_TESTING)
-	list(APPEND EXTRA_SRC
-		FactSystemTestBase.cc
-		FactSystemTestBase.h
-		FactSystemTestGeneric.cc
-		FactSystemTestGeneric.h
-		FactSystemTestPX4.cc
-		FactSystemTestPX4.h
-		ParameterManagerTest.cc
-		ParameterManagerTest.h
-	)
-endif()
 
 add_library(FactSystem
 	Fact.cc
+	Fact.h
 	FactGroup.cc
 	FactGroup.h
-	Fact.h
+	FactGroupListModel.cc
+	FactGroupListModel.h
+	FactGroupWithId.cc
+	FactGroupWithId.h
 	FactMetaData.cc
 	FactMetaData.h
-	FactSystem.cc
-	FactSystem.h
 	FactValueSliderListModel.cc
 	FactValueSliderListModel.h
 	ParameterManager.cc
 	ParameterManager.h
 	SettingsFact.cc
 	SettingsFact.h
-
-	FactSystemTest.qml
-
-	${EXTRA_SRC}
 )
 
 target_link_libraries(FactSystem
 	PRIVATE
 		qgc
 		FactControls
+		Vehicle
+		MAVLink
+		Qt5::Core
+		Qt5::Qml 
 )
 
 target_include_directories(FactSystem

@@ -63,7 +63,7 @@ public:
     void resetAllMessages();
     void resetErrorLevelMessages();
 
-    const QList<StatusText*>& messages() const { return m_messages; }
+    const QVector<StatusText*>& messages() const { return m_messages; }
     QString formattedMessages() const;
 
     bool messageTypeNone() const { return (m_messageType == MessageType::MessageNone); }

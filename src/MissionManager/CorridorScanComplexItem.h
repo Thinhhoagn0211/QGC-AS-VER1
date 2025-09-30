@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,12 +9,11 @@
 
 #pragma once
 
+#include <QtCore/QLoggingCategory>
+
 #include "TransectStyleComplexItem.h"
-#include "MissionItem.h"
 #include "SettingsFact.h"
-#include "QGCLoggingCategory.h"
 #include "QGCMapPolyline.h"
-#include "QGCMapPolygon.h"
 
 Q_DECLARE_LOGGING_CATEGORY(CorridorScanComplexItemLog)
 
@@ -24,11 +23,21 @@ class CorridorScanComplexItem : public TransectStyleComplexItem
 
 public:
     /// @param flyView true: Created for use in the Fly View, false: Created for use in the Plan View
-    /// @param kmlFile Polyline comes from this file, empty for default polyline
-    CorridorScanComplexItem(PlanMasterController* masterController, bool flyView, const QString& kmlFile);
+    /// @param kmlOrShpFile Polyline comes from this file, empty for default polyline
+    CorridorScanComplexItem(PlanMasterController* masterController, bool flyView, const QString& kmlOrShpFile);
 
     Q_PROPERTY(QGCMapPolyline*  corridorPolyline    READ corridorPolyline   CONSTANT)
     Q_PROPERTY(Fact*            corridorWidth       READ corridorWidth      CONSTANT)
+
+    // Note1: These values are persisted to plan files so they cannot be changed with breaking plan file back compat
+    // Note2: rotateEntryPoint expects these values in this order
+    enum EntryPointLocation {
+        EntryPointDefaultOrder = 0,                 // Standard transect generation order
+        EntryPointStartSameEndOppositeSide = 1,     // Start at same end, opposite side of center
+        EntryPointStartOppositeEndSameSide = 2,     // Start at opposite end, same side
+        EntryPointStartOppositeEndOppositeSide = 3, // Start at opposite end, opposite side
+    };
+    Q_ENUM(EntryPointLocation)
 
     Fact*           corridorWidth   (void) { return &_corridorWidthFact; }
     QGCMapPolyline* corridorPolyline(void) { return &_corridorPolyline; }
@@ -57,10 +66,10 @@ public:
 
     static const QString name;
 
-    static const char* jsonComplexItemTypeValue;
+    static constexpr const char* settingsGroup =            "CorridorScan";
+    static constexpr const char* corridorWidthName =        "CorridorWidth";
 
-    static const char* settingsGroup;
-    static const char* corridorWidthName;
+    static constexpr const char* jsonComplexItemTypeValue = "CorridorScan";
 
 private slots:
     void _polylineDirtyChanged          (bool dirty);
@@ -80,10 +89,10 @@ private:
     QGCMapPolyline                  _corridorPolyline;
     QList<QList<QGeoCoordinate>>    _transectSegments;      ///< Internal transect segments including grid exit, turnaround and internal camera points
 
-    int                             _entryPoint;
+    EntryPointLocation              _entryPointLocation;
 
     QMap<QString, FactMetaData*>    _metaDataMap;
     SettingsFact                    _corridorWidthFact;
 
-    static const char* _jsonEntryPointKey;
+    static constexpr const char* _jsonEntryPointKey =       "EntryPoint";
 };

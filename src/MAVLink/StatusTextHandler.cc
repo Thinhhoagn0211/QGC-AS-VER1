@@ -65,7 +65,7 @@ QString StatusTextHandler::getMessageText(const mavlink_message_t &message)
     // Ensure NUL-termination
     b[b.length()-1] = '\0';
 
-    const QString text = QString::fromLocal8Bit(b.constData(), std::strlen(b.constData()));
+    const QString text = QString::fromLocal8Bit(b.constData(), strlen(b.constData()));
 
     return text;
 }
@@ -271,7 +271,7 @@ void StatusTextHandler::_handleStatusText(const mavlink_message_t &message)
     const MAV_COMPONENT compId = static_cast<MAV_COMPONENT>(message.compid);
     if (m_chunkedStatusTextInfoMap.contains(compId) && (m_chunkedStatusTextInfoMap.value(compId).chunkId != statustext.id)) {
         // We have an incomplete chunked status still pending
-        (void) m_chunkedStatusTextInfoMap.value(compId).rgMessageChunks.append(QString());
+        (void) m_chunkedStatusTextInfoMap[compId].rgMessageChunks.append(QString());
         _chunkedStatusTextCompleted(compId);
     }
 

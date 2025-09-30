@@ -12,6 +12,8 @@
 #include "DeviceInfo.h"
 
 #include <QtCore/QDateTime>
+#include <QtCore/QRandomGenerator>
+#include <QtCore/QCryptographicHash>
 
 namespace
 {
@@ -29,12 +31,13 @@ mavlink_channel_t _getMessageChannel(const mavlink_message_t &message)
     return static_cast<mavlink_channel_t>(message.signature[0]);
 }
 
-void _setSigningKey(mavlink_signing_t *signing, QByteArrayView key, bool randomize = false)
+void _setSigningKey(mavlink_signing_t *signing, QByteArray key, bool randomize = false)
 {
     if (randomize) {
-        const size_t key_size = sizeof(signing->secret_key) / 4;
-        uint32_t secret_key[key_size];
-        QRandomGenerator::global()->fillRange(secret_key, key_size);
+        uint8_t secret_key[sizeof(signing->secret_key)];
+        for (size_t i = 0; i < sizeof(secret_key); ++i) {
+            secret_key[i] = static_cast<uint8_t>(QRandomGenerator::global()->generate());
+        }
         (void) memcpy(signing->secret_key, secret_key, sizeof(signing->secret_key));
     } else if (!key.isEmpty()) {
         const QByteArray hash = QCryptographicHash::hash(key, QCryptographicHash::Sha256);
@@ -76,7 +79,7 @@ bool insecureConnectionAccceptUnsignedCallback(const mavlink_status_t *status, u
 
 /// Initialize the signing for a channel, both incoming and outgoing
 /// If key is empty signing will be turned off for channel
-bool initSigning(mavlink_channel_t channel, QByteArrayView key, mavlink_accept_unsigned_t callback)
+bool initSigning(mavlink_channel_t channel, QByteArray key, mavlink_accept_unsigned_t callback)
 {
     if (!key.isEmpty() && !callback) {
         qWarning() << Q_FUNC_INFO << "callback must be specified";

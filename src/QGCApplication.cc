@@ -1,12 +1,11 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
-
 
 #include "QGCApplication.h"
 
@@ -23,7 +22,8 @@
 #include <QtQuick/QQuickImageProvider>
 #include <QtQuick/QQuickWindow>
 #include <QtQuickControls2/QQuickStyle>
-
+#include <QtQuick/QSGRendererInterface>
+#include <QLibraryInfo>
 #include <QtCore/private/qthread_p.h>
 
 #include "QGCLogging.h"
@@ -48,10 +48,124 @@
 #include "Vehicle.h"
 #include "VehicleComponent.h"
 #include "VideoManager.h"
-
+#include "QGroundControlQmlGlobal.h"
+#include "QGCPalette.h"
 #ifndef QGC_NO_SERIAL_LINK
 #include "SerialLink.h"
 #endif
+
+
+
+#include "QGC.h"
+#include "QGCApplication.h"
+#include "UDPLink.h"
+#include "LinkManager.h"
+#include "QGCTemporaryFile.h"
+#include "QGCPalette.h"
+#include "QGCMapPalette.h"
+#include "QGCLoggingCategory.h"
+#include "ParameterEditorController.h"
+#include "ESP8266ComponentController.h"
+#include "ScreenToolsController.h"
+#include "QGCFileDialogController.h"
+#include "RCChannelMonitorController.h"
+#include "SyslinkComponentController.h"
+#include "AutoPilotPlugin.h"
+#include "VehicleComponent.h"
+#include "FirmwarePluginManager.h"
+#include "MultiVehicleManager.h"
+#include "Vehicle.h"
+#include "JoystickManager.h"
+#include "QmlObjectListModel.h"
+#include "QGCGeoBoundingCube.h"
+#include "MissionManager.h"
+#include "FlightMapSettings.h"
+#include "FlightPathSegment.h"
+#include "PlanMasterController.h"
+#include "VideoManager.h"
+#include "VideoReceiver.h"
+#include "LogDownloadController.h"
+#if !defined(QGC_DISABLE_MAVLINK_INSPECTOR)
+#include "MAVLinkInspectorController.h"
+#endif
+#include "HorizontalFactValueGrid.h"
+#include "InstrumentValueData.h"
+#include "SimulatedPosition.h"
+#include "PositionManager.h"
+#include "FollowMe.h"
+#include "MissionCommandTree.h"
+#include "QGCMapPolygon.h"
+#include "QGCMapCircle.h"
+#include "ParameterManager.h"
+#include "SettingsManager.h"
+#include "QGCCorePlugin.h"
+#include "QGCCameraManager.h"
+#include "CameraCalc.h"
+#include "VisualMissionItem.h"
+#include "EditPositionDialogController.h"
+#include "FactValueSliderListModel.h"
+#include "ShapeFileHelper.h"
+#include "QGCFileDownload.h"
+#include "GeoTagController.h"
+#include "LogReplayLink.h"
+#include "VehicleObjectAvoidance.h"
+#include "TrajectoryPoints.h"
+#include "RCToParamDialogController.h"
+#include "QGCImageProvider.h"
+#include "TerrainProfile.h"
+#include "ToolStripAction.h"
+#include "ToolStripActionList.h"
+#include "QGCMAVLink.h"
+#include "VehicleLinkManager.h"
+#include "Autotune.h"
+#include "RemoteIDManager.h"
+#include "GimbalController.h"
+#include "MAVLinkChartController.h"
+#include "LogReplayLinkController.h"
+#include "Vehicle/VehicleSetup/JoystickConfigController.h"
+#include "Vehicle/VehicleSetup/FirmwareUpgradeController.h"
+#include "MavlinkConsoleController.h"
+#if defined(QGC_ENABLE_PAIRING)
+#include "PairingManager.h"
+#endif
+
+#ifndef NO_SERIAL_LINK
+#include "SerialLink.h"
+#endif
+
+#ifndef __mobile__
+#include "GPS/GPSManager.h"
+#endif
+
+#ifdef QGC_RTLAB_ENABLED
+#include "OpalLink.h"
+#endif
+
+#ifdef Q_OS_LINUX
+#ifndef __mobile__
+#include <unistd.h>
+#include <sys/types.h>
+#endif
+#endif
+
+#include "QGCMapEngine.h"
+
+
+static QObject* screenToolsControllerSingletonFactory(QQmlEngine*, QJSEngine*)
+{
+    ScreenToolsController* screenToolsController = new ScreenToolsController;
+    return screenToolsController;
+}
+
+static QObject* mavlinkSingletonFactory(QQmlEngine*, QJSEngine*)
+{
+    return new QGCMAVLink();
+}
+
+static QObject* shapeFileHelperSingletonFactory(QQmlEngine*, QJSEngine*)
+{
+    return new ShapeFileHelper;
+}
 
 QGC_LOGGING_CATEGORY(QGCApplicationLog, "qgc.qgcapplication")
 
@@ -63,6 +177,7 @@ QGCApplication::QGCApplication(int &argc, char *argv[], const QGCCommandLinePars
     , _logOutput(cli.logOutput)
     , _systemId(cli.systemId.value_or(0))
 {
+    
     _msecsElapsedTime.start();
 
     // Setup for network proxy support
@@ -82,20 +197,20 @@ QGCApplication::QGCApplication(int &argc, char *argv[], const QGCCommandLinePars
     if (_runningUnitTests || _simpleBootTest) {
         // We don't want unit tests to use the same QSettings space as the normal app. So we tweak the app
         // name. Also we want to run unit tests with clean settings every time.
-        applicationName = QStringLiteral("%1_unittest").arg(QGC_APP_NAME);
+        applicationName = QStringLiteral("%1_unittest").arg("QGroundcontrol");
     } else {
 #ifdef QGC_DAILY_BUILD
         // This gives daily builds their own separate settings space. Allowing you to use daily and stable builds
         // side by side without daily screwing up your stable settings.
         applicationName = QStringLiteral("%1 Daily").arg(QGC_APP_NAME);
 #else
-        applicationName = QGC_APP_NAME;
+        applicationName = "QGroundcontrol";
 #endif
     }
     setApplicationName(applicationName);
     setOrganizationName(QGC_ORG_NAME);
     setOrganizationDomain(QGC_ORG_DOMAIN);
-    setApplicationVersion(QString(QGC_APP_VERSION_STR));
+    setApplicationVersion(QString("QGC_APP_VERSION_STR"));
 
     // Set settings format
     QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -126,13 +241,13 @@ QGCApplication::QGCApplication(int &argc, char *argv[], const QGCCommandLinePars
         // Determine if upgrade message for settings version bump is required. Check and clear must happen before toolbox is started since
         // that will write some settings.
         if (settings.contains(_settingsVersionKey)) {
-            if (settings.value(_settingsVersionKey).toInt() != QGC_SETTINGS_VERSION) {
+            if (settings.value(_settingsVersionKey).toString() != QLatin1String("V4.4.5")) {
                 settings.clear();
                 _settingsUpgraded = true;
             }
         }
     }
-    settings.setValue(_settingsVersionKey, QGC_SETTINGS_VERSION);
+    settings.setValue(_settingsVersionKey, "V4.4.5");
 
     if (fClearCache) {
         QDir dir(ParameterManager::parameterCacheDir());
@@ -179,7 +294,7 @@ void QGCApplication::setLanguage()
     removeTranslator(&_qgcTranslatorQtLibs);
     if (_locale.name() != "en_US") {
         QLocale::setDefault(_locale);
-        if (_qgcTranslatorQtLibs.load("qt_" + _locale.name(), QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+        if (_qgcTranslatorQtLibs.load("qt_" + _locale.name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
             installTranslator(&_qgcTranslatorQtLibs);
         } else {
             qCWarning(QGCApplicationLog) << "Qt lib localization for" << _locale.name() << "is not present";
@@ -209,7 +324,107 @@ QGCApplication::~QGCApplication()
 }
 
 void QGCApplication::init()
-{
+{   
+
+    static const char* kRefOnly         = "Reference only";
+    static const char* kQGroundControl  = "QGroundControl";
+    static const char* kQGCControllers  = "QGroundControl.Controllers";
+    static const char* kQGCVehicle      = "QGroundControl.Vehicle";
+    static const char* kQGCTemplates    = "QGroundControl.Templates";
+
+    qmlRegisterType<QGCPalette> ("QGroundControl.Palette", 1, 0, "QGCPalette");
+    qmlRegisterType<QGCMapPalette>  ("QGroundControl.Palette", 1, 0, "QGCMapPalette");
+    qmlRegisterType<QGroundControlQmlGlobal> ("QGroundControl", 1, 0, "QGroundControlQmlGlobal");
+
+    qmlRegisterUncreatableType<Vehicle>                 (kQGCVehicle,                       1, 0, "Vehicle",                    kRefOnly);
+    qmlRegisterUncreatableType<MissionManager>          (kQGCVehicle,                       1, 0, "MissionManager",             kRefOnly);
+    qmlRegisterUncreatableType<ParameterManager>        (kQGCVehicle,                       1, 0, "ParameterManager",           kRefOnly);
+    qmlRegisterUncreatableType<VehicleObjectAvoidance>  (kQGCVehicle,                       1, 0, "VehicleObjectAvoidance",     kRefOnly);
+    qmlRegisterUncreatableType<QGCCameraManager>        (kQGCVehicle,                       1, 0, "QGCCameraManager",           kRefOnly);
+    // qmlRegisterUncreatableType<QGCVideoStreamInfo>      (kQGCVehicle,                       1, 0, "QGCVideoStreamInfo",         kRefOnly);
+    qmlRegisterUncreatableType<LinkInterface>           (kQGCVehicle,                       1, 0, "LinkInterface",              kRefOnly);
+    qmlRegisterUncreatableType<VehicleLinkManager>      (kQGCVehicle,                       1, 0, "VehicleLinkManager",         kRefOnly);
+    qmlRegisterUncreatableType<Autotune>                (kQGCVehicle,                       1, 0, "Autotune",                   kRefOnly);
+    qmlRegisterUncreatableType<RemoteIDManager>         (kQGCVehicle,                       1, 0, "RemoteIDManager",            kRefOnly);
+    qmlRegisterUncreatableType<GimbalController>        (kQGCVehicle,                       1, 0, "GimbalController",           kRefOnly);
+
+    qmlRegisterUncreatableType<MissionController>       (kQGCControllers,                   1, 0, "MissionController",          kRefOnly);
+    qmlRegisterUncreatableType<GeoFenceController>      (kQGCControllers,                   1, 0, "GeoFenceController",         kRefOnly);
+    qmlRegisterUncreatableType<RallyPointController>    (kQGCControllers,                   1, 0, "RallyPointController",       kRefOnly);
+
+    qmlRegisterUncreatableType<MissionItem>         (kQGroundControl,                       1, 0, "MissionItem",                kRefOnly);
+    qmlRegisterUncreatableType<VisualMissionItem>   (kQGroundControl,                       1, 0, "VisualMissionItem",          kRefOnly);
+    qmlRegisterUncreatableType<FlightPathSegment>   (kQGroundControl,                       1, 0, "FlightPathSegment",          kRefOnly);
+    qmlRegisterUncreatableType<QmlObjectListModel>  (kQGroundControl,                       1, 0, "QmlObjectListModel",         kRefOnly);
+    qmlRegisterUncreatableType<MissionCommandTree>  (kQGroundControl,                       1, 0, "MissionCommandTree",         kRefOnly);
+    qmlRegisterUncreatableType<CameraCalc>          (kQGroundControl,                       1, 0, "CameraCalc",                 kRefOnly);
+    qmlRegisterUncreatableType<LogReplayLink>       (kQGroundControl,                       1, 0, "LogReplayLink",              kRefOnly);
+    qmlRegisterUncreatableType<InstrumentValueData> (kQGroundControl,                       1, 0, "InstrumentValueData",        kRefOnly);
+    qmlRegisterType<LogReplayLinkController>        (kQGroundControl,                       1, 0, "LogReplayLinkController");
+#if !defined(QGC_DISABLE_MAVLINK_INSPECTOR)
+    qmlRegisterUncreatableType<MAVLinkChartController> (kQGroundControl,                    1, 0, "MAVLinkChart",               kRefOnly);
+#endif
+#if defined(QGC_ENABLE_PAIRING)
+    qmlRegisterUncreatableType<PairingManager>      (kQGroundControl,                       1, 0, "PairingManager",             kRefOnly);
+#endif
+
+    qmlRegisterUncreatableType<AutoPilotPlugin>     ("QGroundControl.AutoPilotPlugin",      1, 0, "AutoPilotPlugin",            kRefOnly);
+    qmlRegisterUncreatableType<VehicleComponent>    ("QGroundControl.AutoPilotPlugin",      1, 0, "VehicleComponent",           kRefOnly);
+    qmlRegisterUncreatableType<JoystickManager>     ("QGroundControl.JoystickManager",      1, 0, "JoystickManager",            kRefOnly);
+    qmlRegisterUncreatableType<Joystick>            ("QGroundControl.JoystickManager",      1, 0, "Joystick",                   kRefOnly);
+    qmlRegisterUncreatableType<QGCPositionManager>  ("QGroundControl.QGCPositionManager",   1, 0, "QGCPositionManager",         kRefOnly);
+    qmlRegisterUncreatableType<FactValueSliderListModel>("QGroundControl.FactControls",     1, 0, "FactValueSliderListModel",   kRefOnly);
+
+    qmlRegisterUncreatableType<QGCMapPolygon>       ("QGroundControl.FlightMap",            1, 0, "QGCMapPolygon",              kRefOnly);
+    qmlRegisterUncreatableType<QGCGeoBoundingCube>  ("QGroundControl.FlightMap",            1, 0, "QGCGeoBoundingCube",         kRefOnly);
+    qmlRegisterUncreatableType<TrajectoryPoints>    ("QGroundControl.FlightMap",            1, 0, "TrajectoryPoints",           kRefOnly);
+
+    qmlRegisterUncreatableType<FactValueGrid>       (kQGCTemplates,                         1, 0, "FactValueGrid",              kRefOnly);
+    qmlRegisterType<HorizontalFactValueGrid>        (kQGCTemplates,                         1, 0, "HorizontalFactValueGrid");
+
+    qmlRegisterType<QGCMapCircle>                   ("QGroundControl.FlightMap",            1, 0, "QGCMapCircle");
+
+    qmlRegisterType<ParameterEditorController>      (kQGCControllers,                       1, 0, "ParameterEditorController");
+    qmlRegisterType<ESP8266ComponentController>     (kQGCControllers,                       1, 0, "ESP8266ComponentController");
+    qmlRegisterType<ScreenToolsController>          (kQGCControllers,                       1, 0, "ScreenToolsController");
+    qmlRegisterType<PlanMasterController>           (kQGCControllers,                       1, 0, "PlanMasterController");
+    qmlRegisterType<QGCFileDialogController>        (kQGCControllers,                       1, 0, "QGCFileDialogController");
+    qmlRegisterType<RCChannelMonitorController>     (kQGCControllers,                       1, 0, "RCChannelMonitorController");
+    qmlRegisterType<JoystickConfigController>       (kQGCControllers,                       1, 0, "JoystickConfigController");
+    qmlRegisterType<LogDownloadController>          (kQGCControllers,                       1, 0, "LogDownloadController");
+    qmlRegisterType<SyslinkComponentController>     (kQGCControllers,                       1, 0, "SyslinkComponentController");
+    qmlRegisterType<EditPositionDialogController>   (kQGCControllers,                       1, 0, "EditPositionDialogController");
+    qmlRegisterType<RCToParamDialogController>      (kQGCControllers,                       1, 0, "RCToParamDialogController");
+
+    qmlRegisterType<TerrainProfile>                 ("QGroundControl.Controls",             1, 0, "TerrainProfile");
+    qmlRegisterType<ToolStripAction>                ("QGroundControl.Controls",             1, 0, "ToolStripAction");
+    qmlRegisterType<ToolStripActionList>            ("QGroundControl.Controls",             1, 0, "ToolStripActionList");
+
+#ifndef __mobile__
+#ifndef NO_SERIAL_LINK
+    qmlRegisterType<FirmwareUpgradeController>      (kQGCControllers,                       1, 0, "FirmwareUpgradeController");
+#endif
+#endif
+    qmlRegisterType<GeoTagController>               (kQGCControllers,                       1, 0, "GeoTagController");
+    qmlRegisterType<MAVLinkConsoleController>       (kQGCControllers,                       1, 0, "MAVLinkConsoleController");
+#if !defined(QGC_DISABLE_MAVLINK_INSPECTOR)
+    qmlRegisterType<MAVLinkInspectorController>     (kQGCControllers,                       1, 0, "MAVLinkInspectorController");
+#endif
+
+    qmlRegisterSingletonType<ScreenToolsController>(
+        "QGroundControl.ScreenToolsController", 1, 0, "ScreenToolsController",
+        screenToolsControllerSingletonFactory);
+
+    qmlRegisterSingletonType<ShapeFileHelper>(
+        "QGroundControl.ShapeFileHelper", 1, 0, "ShapeFileHelper",
+        shapeFileHelperSingletonFactory);
+
+    qmlRegisterSingletonType<QGCMAVLink>(
+        "MAVLink", 1, 0, "MAVLink",
+        mavlinkSingletonFactory);
+
+
+
     SettingsManager::instance()->init();
     if (_systemId > 0) {
         qCDebug(QGCApplicationLog) << "Setting MAVLink System ID to:" << _systemId;
@@ -236,10 +451,18 @@ void QGCApplication::init()
 
 void QGCApplication::_initVideo()
 {
-#ifdef QGC_GST_STREAMING
-    // Gstreamer video playback requires OpenGL
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+// #ifdef QGC_GST_STREAMING
+//     // Gstreamer video playback requires OpenGL
+//     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+// #endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+    #if QT_CONFIG(vulkan) || QT_CONFIG(opengl)
+        QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    #endif
 #endif
+
+
 
     QGCCorePlugin::instance();  // CorePlugin must be initialized before VideoManager for Video Cleanup
     VideoManager::instance();
@@ -255,7 +478,10 @@ void QGCApplication::_initForNormalAppBoot()
     MAVLinkProtocol::instance()->init();
     MultiVehicleManager::instance()->init();
     _qmlAppEngine = QGCCorePlugin::instance()->createQmlApplicationEngine(this);
-    QObject::connect(_qmlAppEngine, &QQmlApplicationEngine::objectCreationFailed, this, QCoreApplication::quit, Qt::QueuedConnection);
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+        QObject::connect(_qmlAppEngine, &QQmlApplicationEngine::objectCreationFailed,
+                        this, QCoreApplication::quit, Qt::QueuedConnection);
+    #endif
     QGCCorePlugin::instance()->createRootWindow(_qmlAppEngine);
 
     AudioOutput::instance()->init(SettingsManager::instance()->appSettings()->audioMuted());
@@ -269,10 +495,11 @@ void QGCApplication::_initForNormalAppBoot()
 
     // Set the window icon now that custom plugin has a chance to override it
 #ifdef Q_OS_LINUX
-    QUrl windowIcon = QUrl("qrc:/res/qgroundcontrol.ico");
-    windowIcon = _qmlAppEngine->interceptUrl(windowIcon, QQmlAbstractUrlInterceptor::UrlString);
-    // The interceptor needs "qrc:/path" but QIcon expects ":/path"
-    setWindowIcon(QIcon(":" + windowIcon.path()));
+    // QUrl windowIcon = QUrl("qrc:/res/qgroundcontrol.ico");
+    // windowIcon = _qmlAppEngine->interceptUrl(windowIcon, QQmlAbstractUrlInterceptor::UrlString);
+    // // The interceptor needs "qrc:/path" but QIcon expects ":/path"
+    // setWindowIcon(QIcon(":" + windowIcon.path()));
+    setWindowIcon(QIcon(":/res/qgroundcontrol.ico"));
 #endif
 
     // Safe to show popup error messages now that main window is created

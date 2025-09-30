@@ -1,126 +1,43 @@
-
-add_subdirectory(Actuators)
-
-set(EXTRA_SRC)
-if(BUILD_TESTING)
-	list(APPEND EXTRA_SRC
-		FTPManagerTest.cc
-		FTPManagerTest.h
-		RequestMessageTest.cc
-		RequestMessageTest.h
-		SendMavCommandWithHandlerTest.cc
-		SendMavCommandWithHandlerTest.h
-		SendMavCommandWithSignallingTest.cc
-		SendMavCommandWithSignallingTest.h
-		VehicleLinkManagerTest.cc
-		VehicleLinkManagerTest.h
-	)
-endif()
-
 add_library(Vehicle
-	Autotune.cpp
-	Autotune.h
-	CompInfo.cc
-	CompInfo.h
-	CompInfoActuators.cc
-	CompInfoActuators.h
-	CompInfoEvents.cc
-	CompInfoEvents.h
-	CompInfoParam.cc
-	CompInfoParam.h
-	CompInfoGeneral.cc
-	CompInfoGeneral.h
-	ComponentInformationCache.cc
-	ComponentInformationCache.h
-	ComponentInformationManager.cc
-	ComponentInformationManager.h
-	ComponentInformationTranslation.cc
-	ComponentInformationTranslation.h
-	EventHandler.cc
-	EventHandler.h
-	FTPManager.cc
-	FTPManager.h
-	GPSRTKFactGroup.cc
-	GPSRTKFactGroup.h
-	HealthAndArmingCheckReport.cc
-	HealthAndArmingCheckReport.h
-	ImageProtocolManager.cc
-	ImageProtocolManager.h
-	InitialConnectStateMachine.cc
-	InitialConnectStateMachine.h
-	MAVLinkLogManager.cc
-	MAVLinkLogManager.h
-	MAVLinkStreamConfig.cc
-	MAVLinkStreamConfig.h
-	MultiVehicleManager.cc
-	MultiVehicleManager.h
-	StateMachine.cc
-	StateMachine.h
-	StandardModes.cc
-	StandardModes.h
-	SysStatusSensorInfo.cc
-	SysStatusSensorInfo.h
-	TerrainFactGroup.cc
-	TerrainFactGroup.h
-	TerrainProtocolHandler.cc
-	TerrainProtocolHandler.h
-	TrajectoryPoints.cc
-	TrajectoryPoints.h
-	VehicleBatteryFactGroup.cc
-	VehicleBatteryFactGroup.h
-	Vehicle.cc
-	VehicleClockFactGroup.cc
-	VehicleClockFactGroup.h
-	VehicleDistanceSensorFactGroup.cc
-	VehicleDistanceSensorFactGroup.h
-	VehicleEFIFactGroup.cc
-	VehicleEFIFactGroup.h
-	VehicleEscStatusFactGroup.cc
-	VehicleEscStatusFactGroup.h
-	VehicleEstimatorStatusFactGroup.cc
-	VehicleEstimatorStatusFactGroup.h
-	VehicleLocalPositionFactGroup.cc
-	VehicleLocalPositionFactGroup.h
-	VehicleLocalPositionSetpointFactGroup.cc
-	VehicleLocalPositionSetpointFactGroup.h
-	VehicleGPSFactGroup.cc
-	VehicleGPSFactGroup.h
-	VehicleGPS2FactGroup.cc
-	VehicleGPS2FactGroup.h
-	VehicleGeneratorFactGroup.cc
-	VehicleGeneratorFactGroup.h
-	Vehicle.h
-	VehicleLinkManager.cc
-	VehicleLinkManager.h
-	VehicleObjectAvoidance.cc
-	VehicleObjectAvoidance.h
-	VehicleSetpointFactGroup.cc
-	VehicleSetpointFactGroup.h
-	VehicleTemperatureFactGroup.cc
-	VehicleTemperatureFactGroup.h
-	VehicleVibrationFactGroup.cc
-	VehicleVibrationFactGroup.h
-	VehicleWindFactGroup.cc
-	VehicleWindFactGroup.h
-	VehicleHygrometerFactGroup.cc
-	VehicleHygrometerFactGroup.h
-	RemoteIDManager.h
-	RemoteIDManager.cc
-
-	${EXTRA_SRC}
+    Autotune.cpp
+    Autotune.h
+    FTPManager.cc
+    FTPManager.h
+    InitialConnectStateMachine.cc
+    InitialConnectStateMachine.h
+    MAVLinkLogManager.cc
+    MAVLinkLogManager.h
+    MultiVehicleManager.cc
+    MultiVehicleManager.h
+    RemoteIDManager.cc
+    RemoteIDManager.h
+    StandardModes.cc
+    StandardModes.h
+    TerrainProtocolHandler.cc
+    TerrainProtocolHandler.h
+    TrajectoryPoints.cc
+    TrajectoryPoints.h
+    Vehicle.cc
+    Vehicle.h
+    VehicleLinkManager.cc
+    VehicleLinkManager.h
+    VehicleObjectAvoidance.cc
+    VehicleObjectAvoidance.h
 )
 
 target_link_libraries(Vehicle
-	PRIVATE
-		Actuators
-		Gimbal
-		ui
-		compression
-		libevents_generated
-		libevents_parser
-		libevents_health_and_arming_checks
 	PUBLIC
+		Qt5::Core
+		Qt5::Network
+        MAVLink
+        LibEvents
+        ADSB
 		qgc
 )
 
-target_include_directories(Vehicle INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(Vehicle PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(Actuators)
+add_subdirectory(ComponentInformation)
+add_subdirectory(FactGroups)
+add_subdirectory(VehicleSetup)

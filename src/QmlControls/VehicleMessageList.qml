@@ -7,16 +7,17 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.2
 
 import QGroundControl 1.0
-import QGroundControl.Controls  1.0
 import QGroundControl.FactSystem 1.0
-import QGroundControl.MultiVehicleManager 1.0
-import QGroundControl.ScreenTools 1.0
-import QGroundControl.Palette 1.0
+import QGroundControl.Controls  1.0
+
+
+
+
 
 TextArea {
     id:                     messageText
@@ -50,7 +51,7 @@ TextArea {
 
     Connections {
         target: _activeVehicle
-        onNewFormattedMessage: (formattedMessage) => { messageText.insert(0, formatMessage(formattedMessage)) }
+        function onNewFormattedMessage(formattedMessage) { messageText.insert(0, formatMessage(formattedMessage)) }
     }
 
     FactPanelController {

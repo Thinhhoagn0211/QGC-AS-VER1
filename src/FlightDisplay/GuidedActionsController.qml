@@ -7,20 +7,19 @@
  *
  ****************************************************************************/
 
-import QtQuick                  2.3
-import QtQuick.Controls         1.2
-import QtQuick.Controls.Styles  1.4
-import QtQuick.Dialogs          1.2
-import QtLocation               5.3
-import QtPositioning            5.3
-import QtQuick.Layouts          1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtLocation 5.3
+import QtPositioning 5.3
+import QtQuick.Layouts 1.2
 
-import QGroundControl                           1.0
-import QGroundControl.ScreenTools               1.0
-import QGroundControl.Controls                  1.0
-import QGroundControl.Palette                   1.0
-import QGroundControl.Vehicle                   1.0
-import QGroundControl.FlightMap                 1.0
+import QGroundControl 1.0
+
+import QGroundControl.Controls  1.0
+
+
+import QGroundControl.FlightMap  1.0
 
 /// This provides the smarts behind the guided mode commands, minus the user interface. This way you can change UI
 /// without affecting the underlying functionality.
@@ -41,11 +40,6 @@ Item {
     readonly property string mvDisarmTitle:                 qsTr("Disarm (MV)")
     readonly property string rtlTitle:                      qsTr("Return")
     readonly property string takeoffTitle:                  qsTr("Takeoff")
-    readonly property string connectTitle:                   qsTr("Connect")
-    readonly property string zoomInTitle:                   qsTr("Zoom In")
-    readonly property string zoomOutTitle:                  qsTr("Zoom Out")
-    readonly property string planTitle:                     qsTr("Plan")
-    readonly property string settingsTitle:                 qsTr("Settings")
     readonly property string gripperTitle:                  qsTr("Gripper Function")
     readonly property string landTitle:                     qsTr("Land")
     readonly property string startMissionTitle:             qsTr("Start Mission")
@@ -68,9 +62,6 @@ Item {
     readonly property string setEstimatorOriginTitle:       qsTr("Set Estimator origin")
     readonly property string setFlightMode:                 qsTr("Set Flight Mode")
     readonly property string changeHeadingTitle:            qsTr("Change Heading")
-    readonly property string gimbalTitle:                    qsTr("Gimbal")
-    readonly property string photoVideoTitle:               qsTr("Camera")
-    readonly property string scopeTitle:                    qsTr("Range Finder")
 
     readonly property string armMessage:                        qsTr("Arm the vehicle.")
     readonly property string mvArmMessage:                      qsTr("Arm selected vehicles.")
@@ -79,7 +70,6 @@ Item {
     readonly property string mvDisarmMessage:                   qsTr("Disarm selected vehicles.")
     readonly property string emergencyStopMessage:              qsTr("WARNING: THIS WILL STOP ALL MOTORS. IF VEHICLE IS CURRENTLY IN THE AIR IT WILL CRASH.")
     readonly property string takeoffMessage:                    qsTr("Takeoff from ground and hold position.")
-    readonly property string planMessage:                       qsTr("Open the mission plan editor to create or edit a mission.")
     readonly property string gripperMessage:                    qsTr("Grab or Release the cargo")
     readonly property string startMissionMessage:               qsTr("Takeoff from ground and start the current mission.")
     readonly property string mvStartMissionMessage:             qsTr("Takeoff from ground and start the current mission for selected vehicles.")
@@ -137,14 +127,7 @@ Item {
     readonly property int actionMVArm:                      31
     readonly property int actionMVDisarm:                   32
     readonly property int actionChangeLoiterRadius:         33
-    readonly property int actionPlan:                       34
-    readonly property int actionSettings:                   35
-    readonly property int actionZoomIn:                     36
-    readonly property int actionZoomOut:                    37
-    readonly property int actionConnect:                    38
-    readonly property int actionGimbal:                     39
-    readonly property int actionPhotoVideo:                 40
-    readonly property int actionScope:                      41
+
 
 
     readonly property int customActionStart:                10000 // Custom actions ids should start here so that they don't collide with the built in actions
@@ -166,8 +149,6 @@ Item {
     property bool showDisarm:               _guidedActionsEnabled && _vehicleArmed && !_vehicleFlying
     property bool showRTL:                  _guidedActionsEnabled && _vehicleArmed && _activeVehicle.guidedModeSupported && _vehicleFlying && !_vehicleInRTLMode
     property bool showTakeoff:              _guidedActionsEnabled && _activeVehicle.takeoffVehicleSupported && !_vehicleFlying && _canTakeoff
-    property bool showSettings:              _guidedActionsEnabled && _activeVehicle 
-    property bool showPlan:                 _guidedActionsEnabled && _activeVehicle
     property bool showLand:                 _guidedActionsEnabled && _activeVehicle.guidedModeSupported && _vehicleArmed && !_activeVehicle.fixedWing && !_vehicleInLandMode
     property bool showStartMission:         _guidedActionsEnabled && _missionAvailable && !_missionActive && !_vehicleFlying && _canStartMission
     property bool showContinueMission:      _guidedActionsEnabled && _missionAvailable && !_missionActive && _vehicleArmed && _vehicleFlying && (_currentMissionIndex < _missionItemCount - 1)
@@ -175,8 +156,7 @@ Item {
     property bool showChangeAlt:            _guidedActionsEnabled && _vehicleFlying && _activeVehicle.guidedModeSupported && _vehicleArmed && !_missionActive
     property bool showChangeLoiterRadius:   _guidedActionsEnabled && _vehicleFlying && _activeVehicle.guidedModeSupported && _vehicleArmed && !_missionActive && _vehicleInFwdFlight && fwdFlightGotoMapCircle.visible
     property bool showChangeSpeed:          _guidedActionsEnabled && _vehicleFlying && _activeVehicle.guidedModeSupported && _vehicleArmed && !_missionActive && _speedLimitsAvailable
-    // property bool showOrbit:                _guidedActionsEnabled && _vehicleFlying && __orbitSupported && !_missionActive && _activeVehicle.homePosition.isValid && !isNaN(_activeVehicle.homePosition.altitude)
-    property bool showOrbit:                _guidedActionsEnabled && _vehicleFlying && __orbitSupported && _activeVehicle.homePosition.isValid && !isNaN(_activeVehicle.homePosition.altitude)
+    property bool showOrbit:                _guidedActionsEnabled && _vehicleFlying && __orbitSupported && !_missionActive && _activeVehicle.homePosition.isValid && !isNaN(_activeVehicle.homePosition.altitude)
     property bool showROI:                  _guidedActionsEnabled && _vehicleFlying && __roiSupported
     property bool showLandAbort:            _guidedActionsEnabled && _vehicleFlying && _fixedWingOnApproach
     property bool showGotoLocation:         _guidedActionsEnabled && _vehicleFlying
@@ -385,7 +365,6 @@ Item {
         function onResumeMissionUploadFail() { confirmAction(actionResumeMissionUploadFail) }
     }
 
-
     Connections {
         target:                             mainWindow
         function onArmVehicleRequest() { armVehicleRequest() }
@@ -424,8 +403,6 @@ Item {
         confirmDialog.visible = false
         guidedValueSlider.visible = false
     }
-
-    signal actionConfirmed()
 
     // Called when an action is about to be executed in order to confirm
     function confirmAction(actionCode, actionData, mapIndicator) {
@@ -482,29 +459,6 @@ Item {
             confirmDialog.message = takeoffMessage
             confirmDialog.hideTrigger = Qt.binding(function() { return !showTakeoff })
             guidedValueSlider.visible = _activeVehicle.guidedTakeoffSupported
-            break;
-        case actionConnect:
-            confirmDialog.title = connectTitle
-            confirmDialog.hideTrigger = true
-            // This is a special case where we want to show the dialog immediately
-            if (showImmediate) {
-                confirmDialog.visible = true
-            }
-            break;
-
-        case actionZoomIn:
-            break;
-        case actionZoomOut:
-            break;
-        case actionPlan:
-            confirmDialog.title = planTitle
-            confirmDialog.message = planMessage
-            confirmDialog.hideTrigger = Qt.binding(function() { return !showPlan })
-            // guidedValueSlider.visible = _activeVehicle.guidedPlanSupported
-            break;
-        case actionSettings:
-            confirmDialog.title = settingsTitle
-            confirmDialog.hideTrigger = true
             break;
         case actionStartMission:
             showImmediate = false
@@ -619,7 +573,6 @@ Item {
         case actionSetHome:
             confirmDialog.title = setHomeTitle
             confirmDialog.message = setHomeMessage
-            console.log("showSetHome", showSetHome)
             confirmDialog.hideTrigger = Qt.binding(function() { return !showSetHome })
             break
         case actionSetEstimatorOrigin:
@@ -634,10 +587,6 @@ Item {
             confirmDialog.title = changeHeadingTitle
             confirmDialog.message = changeHeadingMessage
             break
-        case actionGimbal:
-            break; // Gimbal actions are handled in the GimbalController.qml
-        case actionScope:
-            break;
         default:
             if (!customController.customConfirmAction(actionCode, actionData, mapIndicator, confirmDialog)) {
                 console.warn("Unknown actionCode", actionCode)
@@ -645,9 +594,6 @@ Item {
             }
         }
         confirmDialog.show(showImmediate)
-        if (showImmediate) {
-            actionConfirmed()
-        }
     }
 
     // Executes the specified action
@@ -656,7 +602,6 @@ Item {
         var selectedVehicles;
         switch (actionCode) {
         case actionRTL:
-            console.log("executeAction actionRTL", optionChecked)
             _activeVehicle.guidedModeRTL(optionChecked)
             break
         case actionLand:
@@ -669,30 +614,6 @@ Item {
             } else {
                 _activeVehicle.startTakeoff()
             }
-            break
-        case actionZoomIn:
-            mapControl.zoomLevel += 0.5
-            break
-        case actionZoomOut:
-            mapControl.zoomLevel -= 0.5
-            break
-        case actionConnect:
-            // let overallStatusComponent = overallStatusOfflineIndicatorPage
-            // mainWindow.showIndicatorDrawer(overallStatusOfflineIndicatorPage, null)
-            break;
-        case actionPlan:
-            // _activeVehicle.startPlan()
-            console.log("showPlanView")
-            if (mainWindow.allowViewSwitch()) {
-                mainWindow.closeIndicatorDrawer()
-                mainWindow.showPlanView()
-            }
-            break
-        case actionSettings:
-            console.log("showSettingsTool")
-            // if (mainWindow.allowViewSwitch()) {
-            mainWindow.showSettingsTool()
-            // }
             break
         case actionResumeMission:
         case actionResumeMissionUploadFail:
@@ -743,11 +664,12 @@ Item {
         case actionChangeLoiterRadius:
             _activeVehicle.guidedModeGotoLocation(
                 fwdFlightGotoMapCircle.coordinate,
-                fwdFlightGotoMapCircle.radius.rawValue
+                (fwdFlightGotoMapCircle.clockwiseRotation ? 1 : -1) *
+                        Math.abs(fwdFlightGotoMapCircle.radius.rawValue)
             )
             break
         case actionGoto:
-        _activeVehicle.guidedModeGotoLocation(
+            _activeVehicle.guidedModeGotoLocation(
                 actionData,
                 _vehicleInFwdFlight /* forwardFlightLoiterRadius */
                     ? _flyViewSettings.forwardFlightGoToLocationLoiterRad.value
@@ -795,7 +717,7 @@ Item {
                 }
             }
             break
-        case actionGripper:
+        case actionGripper:           
             _gripperFunction === undefined ? _activeVehicle.sendGripperAction(Vehicle.Invalid_option) : _activeVehicle.sendGripperAction(_gripperFunction)
             break
         case actionSetHome:
@@ -810,10 +732,6 @@ Item {
         case actionChangeHeading:
             _activeVehicle.guidedModeChangeHeading(actionData)
             break
-        case actionGimbal:
-            break;
-        case actionScope:
-            break;
         default:
             if (!customController.customExecuteAction(actionCode, actionData, sliderOutputValue, optionChecked)) {
                 console.warn(qsTr("Internal error: unknown actionCode"), actionCode)

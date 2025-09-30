@@ -1,8 +1,19 @@
-import QtQuick 2.3
-import QtQuick.Layouts 1.3
+/****************************************************************************
+ *
+ * (c) 2009-2022 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ *
+ * QGroundControl is licensed according to the terms in the file
+ * COPYING.md in the root of the source code directory.
+ *
+ ****************************************************************************/
 
-import QGroundControl.Controls     1.0
-import QGroundControl.ScreenTools  1.0
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
+
+import QGroundControl 1.0
+import QGroundControl.ScreenTools 1.0
+import QGroundControl.Controls  1.0
+
 
 RowLayout {
     property alias label:                   _label.text

@@ -1,9 +1,9 @@
-import QtQuick 2.3
-import QtQuick.Layouts 1.3
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
 
 import QGroundControl 1.0
-import QGroundControl.ScreenTools 1.0
-import QGroundControl.Palette 1.0
+import QGroundControl.Controls  1.0
+
 
 ColumnLayout {
     id:                 control    
@@ -71,7 +71,7 @@ ColumnLayout {
         radius:             ScreenTools.defaultFontPixelHeight / 2
 
         Repeater {
-            model: showDividers? _contentLayout.children.length : 0
+            model: showDividers ? _contentLayout.children.length : 0
 
             Rectangle {
                 x:                  showBorder ? _margins : 0

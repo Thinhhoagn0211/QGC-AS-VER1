@@ -7,16 +7,16 @@
  *
  ****************************************************************************/
 
-import QtQuick                      2.11
-import QtQuick.Controls             2.4
-import QtQml.Models                 2.1
-import QtQuick.Layouts              1.12
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQml.Models 2.1
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.FlightDisplay 1.0
-import QGroundControl.Vehicle       1.0
+import QGroundControl 1.0
+
+import QGroundControl.Controls  1.0
+import QGroundControl.FlightDisplay  1.0
+
 
 ColumnLayout {
     spacing: 0.8 * ScreenTools.defaultFontPixelWidth
@@ -25,7 +25,7 @@ ColumnLayout {
 
     Loader {
         id:     modelContainer
-        source: "/checklists/DefaultChecklist.qml"
+        source: "qrc:/qml/QGroundControl/FlightDisplay/DefaultChecklist.qml"
     }
 
     property bool allChecksPassed:  false
@@ -77,17 +77,17 @@ ColumnLayout {
         }
 
         if(vehicle.multiRotor) {
-            modelContainer.source = "/checklists/MultiRotorChecklist.qml"
+            modelContainer.source = "qrc:/qml/QGroundControl/FlightDisplay/MultiRotorChecklist.qml"
         } else if(vehicle.vtol) {
-            modelContainer.source = "/checklists/VTOLChecklist.qml"
+            modelContainer.source = "qrc:/qml/QGroundControl/FlightDisplay/VTOLChecklist.qml"
         } else if(vehicle.rover) {
-            modelContainer.source = "/checklists/RoverChecklist.qml"
+            modelContainer.source = "qrc:/qml/QGroundControl/FlightDisplay/RoverChecklist.qml"
         } else if(vehicle.sub) {
-            modelContainer.source = "/checklists/SubChecklist.qml"
+            modelContainer.source = "qrc:/qml/QGroundControl/FlightDisplay/SubChecklist.qml"
         } else if(vehicle.fixedWing) {
-            modelContainer.source = "/checklists/FixedWingChecklist.qml"
+            modelContainer.source = "qrc:/qml/QGroundControl/FlightDisplay/FixedWingChecklist.qml"
         } else {
-            modelContainer.source = "/checklists/DefaultChecklist.qml"
+            modelContainer.source = "qrc:/qml/QGroundControl/FlightDisplay/DefaultChecklist.qml"
         }
         return
     }

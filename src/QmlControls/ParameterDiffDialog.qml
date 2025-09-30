@@ -7,21 +7,21 @@
  *
  ****************************************************************************/
 
-import QtQuick          2.12
-import QtQuick.Layouts  1.2
-import QtQuick.Controls 2.5
-import QtQuick.Dialogs  1.3
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
 
-import QGroundControl               1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Controllers   1.0
+
 
 QGCPopupDialog {
     title:      qsTr("Load Parameters")
-    buttons:    StandardButton.Cancel | (paramController.diffList.count ? StandardButton.Ok : 0)
+    buttons:    Dialog.Cancel | (paramController.diffList.count ? Dialog.Ok : 0)
 
     property var paramController
 

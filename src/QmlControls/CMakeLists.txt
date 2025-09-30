@@ -1,6 +1,4 @@
 add_library(QmlControls
-	AppMessages.cc
-	AppMessages.h
 	EditPositionDialogController.cc
 	EditPositionDialogController.h
 	FactValueGrid.cc
@@ -11,14 +9,34 @@ add_library(QmlControls
 	HorizontalFactValueGrid.h
 	InstrumentValueData.cc
 	InstrumentValueData.h
+	MavlinkAction.cc
+	MavlinkAction.h
+	MavlinkActionManager.cc
+	MavlinkActionManager.h
 	ParameterEditorController.cc
 	ParameterEditorController.h
+	QGCFenceCircle.cc
+	QGCFenceCircle.h
+	QGCFencePolygon.cc
+	QGCFencePolygon.h
 	QGCFileDialogController.cc
 	QGCFileDialogController.h
 	QGCGeoBoundingCube.cc
 	QGCGeoBoundingCube.h
 	QGCImageProvider.cc
 	QGCImageProvider.h
+	QGCMapCircle.cc
+	QGCMapCircle.h
+	QGCMapPalette.cc
+	QGCMapPalette.h
+	QGCMapPolygon.cc
+	QGCMapPolygon.h
+	QGCMapPolyline.cc
+	QGCMapPolyline.h
+	QGCPalette.cc
+	QGCPalette.h
+	QGCQGeoCoordinate.cc
+	QGCQGeoCoordinate.h
 	QGroundControlQmlGlobal.cc
 	QGroundControlQmlGlobal.h
 	QmlObjectListModel.cc
@@ -36,131 +54,158 @@ add_library(QmlControls
 	ToolStripAction.h
 	ToolStripActionList.cc
 	ToolStripActionList.h
-	CustomAction.h
-	CustomActionManager.h
-	CustomActionManager.cc
 )
 
 add_custom_target(QmlControlsQml
 	SOURCES
+		AltModeDialog.qml
+		AnalyzePage.qml
 		APMSubMotorDisplay.qml
 		AppMessages.qml
+		AppSettings.qml
+		AutotuneUI.qml
 		AxisMonitor.qml
+		BatteryIndicator.qml
+		CameraCalcCamera.qml
+		CameraCalcGrid.qml
+		CameraSection.qml
 		ClickableColor.qml
+		ConfigButton.qml
+		CorridorScanEditor.qml
+		CorridorScanMapVisual.qml
 		DeadMouseArea.qml
 		DropButton.qml
-		ConfigButton.qml
-		SettingsButton.qml
 		DropPanel.qml
 		EditPositionDialog.qml
 		ExclusiveGroupItem.qml
-		FactSliderPanel.qml
-		AutotuneUI.qml
+		FactSlider.qml
 		FileButton.qml
-		FlightModeDropdown.qml
+		FirstRunPrompt.qml
+		FlightModeIndicator.qml
 		FlightModeMenu.qml
-		HackAndroidFileDialog.qml
+		FlightModeMenuIndicator.qml
+		FlyViewToolBar.qml
+		FlyViewToolBarIndicators.qml
+		FWLandingPatternEditor.qml
+		FWLandingPatternMapVisual.qml
+		GeoFenceEditor.qml
+		GeoFenceMapVisuals.qml
+		GPSIndicator.qml
+		GPSIndicatorPage.qml
 		HeightIndicator.qml
 		HorizontalFactValueGrid.qml
 		IndicatorButton.qml
-		InstrumentValueArea.qml
 		InstrumentValueEditDialog.qml
 		InstrumentValueLabel.qml
 		InstrumentValueValue.qml
 		JoystickThumbPad.qml
 		KMLOrSHPFileDialog.qml
+		LabelledButton.qml
+		LabelledComboBox.qml
+		LabelledLabel.qml
+		LabelledSlider.qml
 		LogReplayStatusBar.qml
+		MainStatusIndicator.qml
+		MainStatusIndicatorOfflinePage.qml
 		MainWindowSavedState.qml
 		MAVLinkChart.qml
 		MAVLinkMessageButton.qml
 		MissionCommandDialog.qml
+		MissionItemEditor.qml
 		MissionItemIndexLabel.qml
-		ModeSwitchDisplay.qml
-		MultiRotorMotorDisplay.qml
+		MissionItemMapVisual.qml
+		MissionItemStatus.qml
+		MissionSettingsEditor.qml
+		MvPanelPage.qml
 		OfflineMapButton.qml
+		OfflineMapEditor.qml
+		OfflineMapInfo.qml
 		ParameterDiffDialog.qml
-		ParameterEditorDialog.qml
 		ParameterEditor.qml
+		ParameterEditorDialog.qml
 		PIDTuning.qml
+		PipState.qml
+		PipView.qml
+		PlanEditToolbar.qml
+		PlanToolBarIndicators.qml
+		PlanView.qml
+		PlanViewToolBar.qml
 		PreFlightCheckButton.qml
 		PreFlightCheckGroup.qml
-		PreFlightCheckList.qml
 		PreFlightCheckModel.qml
 		QGCButton.qml
 		QGCCheckBox.qml
+		QGCCheckBoxSlider.qml
 		QGCColoredImage.qml
+		QGCColumnButton.qml
 		QGCComboBox.qml
 		QGCDelayButton.qml
-		QGCControlDebug.qml
 		QGCDynamicObjectManager.qml
 		QGCFileDialog.qml
-		QGCFlickableHorizontalIndicator.qml
 		QGCFlickable.qml
-		QGCFlickableVerticalIndicator.qml
+		QGCFlickableScrollIndicator.qml
 		QGCGroupBox.qml
-		QGCHoverButton.qml
 		QGCLabel.qml
 		QGCListView.qml
 		QGCMapLabel.qml
-		QGCMenuItem.qml
 		QGCMenu.qml
+		QGCMenuItem.qml
 		QGCMenuSeparator.qml
 		QGCMouseArea.qml
 		QGCMovableItem.qml
 		QGCOptionsComboBox.qml
-		QGCPipOverlay.qml
-		QGCPipState.qml
-		QGCPopupDialogContainer.qml
+		QGCPageIndicator.qml
 		QGCPopupDialog.qml
 		QGCRadioButton.qml
+		QGCRoundButton.qml
+		QGCSimpleMessageDialog.qml
 		QGCSlider.qml
+		QGCSwipeView.qml
 		QGCSwitch.qml
 		QGCTabBar.qml
 		QGCTabButton.qml
 		QGCTextField.qml
 		QGCToolBarButton.qml
 		QGCToolInsets.qml
-		QGCViewDialogContainer.qml
-		QGCViewDialog.qml
-		QGCViewMessage.qml
-		QmlTest.qml
+		RallyPointEditorHeader.qml
+		RallyPointItemEditor.qml
+		RallyPointMapVisuals.qml
 		RCChannelMonitor.qml
 		RCToParamDialog.qml
-		RoundButton.qml
+		RemoteIDIndicatorPage.qml
 		ScreenTools.qml
 		SectionHeader.qml
+		SelectableControl.qml
+		SettingsButton.qml
+		SettingsGroupLayout.qml
+		SetupPage.qml
+		SignalStrength.qml
+		SimpleItemEditor.qml
+		SimpleItemMapVisual.qml
 		SliderSwitch.qml
+		StructureScanEditor.qml
+		StructureScanMapVisual.qml
 		SubMenuButton.qml
+		SurveyItemEditor.qml
+		SurveyMapVisual.qml
+		TakeoffItemMapVisual.qml
+		TerrainStatus.qml
+		TimedProgressTracker.qml
+		ToolIndicatorPage.qml
 		ToolStrip.qml
+		ToolStripDropPanel.qml
+		ToolStripHoverButton.qml
+		TransectStyleComplexItemEditor.qml
+		TransectStyleComplexItemStats.qml
+		TransectStyleComplexItemTabBar.qml
+		TransectStyleComplexItemTerrainFollow.qml
+		TransectStyleMapVisuals.qml
+		ValueSlider.qml
+		VehicleMessageList.qml
 		VehicleRotationCal.qml
 		VehicleSummaryRow.qml
-		MainStatusIndicatorOfflinePage.qml
-		GimbalIndicatorPage.qml
-		PhotoVideoControl.qml
-		ScopeIndicatorPage.qml
-		ToolIndicatorPage.qml
-		SettingsGroupLayout.qml
-		LabelledButton.qml
-		LabelledLabel.qml
-		QGCCheckBoxSlider.qml
-		QGCSwipeView.qml
-		MvPanelPage.qml
-		QGCPageIndicator.qml
-		QGCButtonMission.qml
-		MetricsRow.qml
-		MissionItemDelegate.qml
-		ToolStripDropPanel.qml
-		PipView.qml
-		FlyViewToolBar.qml
-		FlyViewToolBarIndicators.qml
-		VehicleMessageList.qml
-		PipState.qml
-		LabelledComboBox.qml
-		OfflineMapEditor.qml
-		OfflineMapInfo.qml
-		FactSlider.qml
-		FlightModeIndicator.qml
-		ValueSlider.qml
+		VTOLLandingPatternEditor.qml
+		VTOLLandingPatternMapVisual.qml
 )
 
 target_link_libraries(QmlControls

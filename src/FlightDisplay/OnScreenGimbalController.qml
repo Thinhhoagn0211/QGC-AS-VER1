@@ -7,13 +7,13 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.12
+import QtQuick 2.4
 
-import QGroundControl               1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Palette       1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
+
+
 
 Item {
     id:             rootItem

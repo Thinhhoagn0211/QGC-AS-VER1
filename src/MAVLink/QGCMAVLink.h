@@ -13,7 +13,7 @@
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtQmlIntegration/QtQmlIntegration>
+
 
 #include "MAVLinkLib.h"
 
@@ -25,8 +25,8 @@ Q_DECLARE_METATYPE(MAV_AUTOPILOT)
 class QGCMAVLink : public QObject
 {
     Q_OBJECT
-    QML_NAMED_ELEMENT(MAVLink)
-    QML_SINGLETON
+    
+    
 
 public:
     // Creating an instance of QGCMAVLink is only meant to be used for the Qml Singleton
@@ -44,7 +44,7 @@ public:
     static constexpr const VehicleClass_t VehicleClassFixedWing   = MAV_TYPE_FIXED_WING;
     static constexpr const VehicleClass_t VehicleClassRoverBoat   = MAV_TYPE_GROUND_ROVER;
     static constexpr const VehicleClass_t VehicleClassSub         = MAV_TYPE_SUBMARINE;
-    static constexpr const VehicleClass_t VehicleClassSpacecraft  = MAV_TYPE_SPACECRAFT_ORBITER;
+    // static constexpr const VehicleClass_t VehicleClassSpacecraft  = MAV_TYPE_SPACECRAFT_ORBITER;
     static constexpr const VehicleClass_t VehicleClassMultiRotor  = MAV_TYPE_QUADROTOR;
     static constexpr const VehicleClass_t VehicleClassVTOL        = MAV_TYPE_VTOL_TAILSITTER_QUADROTOR;
     static constexpr const VehicleClass_t VehicleClassGeneric     = MAV_TYPE_GENERIC;
@@ -64,7 +64,7 @@ public:
     static bool                     isFixedWing                 (MAV_TYPE mavType);
     static bool                     isRoverBoat                 (MAV_TYPE mavType);
     static bool                     isSub                       (MAV_TYPE mavType);
-    static bool                     isSpacecraft                (MAV_TYPE mavType);
+    // static bool                     isSpacecraft                (MAV_TYPE mavType);
     static bool                     isMultiRotor                (MAV_TYPE mavType);
     static bool                     isVTOL                      (MAV_TYPE mavType);
     static VehicleClass_t           vehicleClass                (MAV_TYPE mavType);

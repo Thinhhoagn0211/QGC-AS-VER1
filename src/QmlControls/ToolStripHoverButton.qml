@@ -7,12 +7,12 @@
  *
  ****************************************************************************/
 
-import QtQuick              2.3
-import QtQuick.Controls     2.2
-import QtGraphicalEffects   1.0
+import QtQuick 2.4
+import QtQuick.Controls 2.2
 
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Palette       1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
 
 Button {
     id:             control
@@ -45,52 +45,21 @@ Button {
     onCheckedChanged: toolStripAction.checked = checked
 
     onClicked: {
-        dropPanel.hide()
-        if (!toolStripAction.dropPanelComponent) {
-            toolStripAction.triggered(this)
-                if (toolStripAction.objectName === "connectAction") {
-                    mainWindow.showToolbarDrawer(overallStatusOfflineIndicatorPage, this)
-                } else if (toolStripAction.objectName === "actionGimbal") {
-                    mainWindow.showToolbarDrawer(dropGimbalIndicatorPage, this)
-                } else if (toolStripAction.objectName === "actionPhotoVideo") {
-                    mainWindow.showToolbarCameraDrawer(photoVideoControlComponent, this)
-                } else if (toolStripAction.objectName === "actionScope") {
-                    mainWindow.showToolbarDrawer(scopeIndicatorPageComponent, this)
-                }
-        } else if (checked) {
-            var panelEdgeTopPoint = mapToItem(_root, width, 0)
-            dropPanel.show(panelEdgeTopPoint, toolStripAction.dropPanelComponent, this)
-            checked = true
-            control.dropped(index)
+        if (mainWindow.allowViewSwitch()) {
+            dropPanel.hide()
+            if (!toolStripAction.dropPanelComponent) {
+                toolStripAction.triggered(this)
+            } else if (checked) {
+                var panelEdgeTopPoint = mapToItem(_root, width, 0)
+                dropPanel.show(panelEdgeTopPoint, toolStripAction.dropPanelComponent, this)
+                checked = true
+                control.dropped(index)
+            }
+        } else if (checkable) {
+            checked = !checked
         }
     }
 
-
-    Component {
-        id: overallStatusOfflineIndicatorPage
-
-        MainStatusIndicatorOfflinePage { }
-    }
-
-    Component {
-        id: dropGimbalIndicatorPage
-        
-        GimbalIndicatorPage {}
-    }
-
-    Component {
-        id: scopeIndicatorPageComponent
-
-        ScopeIndicatorPage {}
-    }
-
-    Component {
-        id: photoVideoControlComponent
-
-        PhotoVideoControl {}
-    }
-    
-    
     QGCPalette { id: qgcPal; colorGroupEnabled: control.enabled }
 
     contentItem: Item {
@@ -163,7 +132,7 @@ Button {
         id:             buttonBkRect
         color:          (control.checked || control.pressed) ?
                             qgcPal.buttonHighlight :
-                            (control.hovered ? qgcPal.toolStripHoverColor : qgcPal.toolbarBackground)
+                            ((control.enabled && control.hovered) ? qgcPal.toolStripHoverColor : qgcPal.toolbarBackground)
         anchors.fill:   parent
     }
 }

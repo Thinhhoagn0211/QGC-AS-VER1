@@ -7,15 +7,15 @@
  *
  ****************************************************************************/
 
-import QtQuick          2.3
-import QtQuick.Window   2.2
-import QtQuick.Controls 1.2
+import QtQuick 2.4
+import QtQuick.Window 2.1
+import QtQuick.Controls 2.2
 
-import QGroundControl               1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+
+import QGroundControl.Controls  1.0
+
+
 
 Rectangle {
     id:     _root
@@ -24,20 +24,19 @@ Rectangle {
 
     signal popout()
 
-    ExclusiveGroup { id: setupButtonGroup }
-
     readonly property real  _defaultTextHeight:     ScreenTools.defaultFontPixelHeight
     readonly property real  _defaultTextWidth:      ScreenTools.defaultFontPixelWidth
     readonly property real  _horizontalMargin:      _defaultTextWidth / 2
     readonly property real  _verticalMargin:        _defaultTextHeight / 2
     readonly property real  _buttonWidth:           _defaultTextWidth * 18
 
-    GeoTagController {
-        id: geoController
+    // This need to block click event leakage to underlying map.
+    DeadMouseArea {
+        anchors.fill: parent
     }
 
-    LogDownloadController {
-        id: logController
+    GeoTagController {
+        id: geoController
     }
 
     QGCFlickable {
@@ -64,7 +63,7 @@ Rectangle {
             // I don't know why this does not work
             Connections {
                 target:         QGroundControl.settingsManager.appSettings.appFontPointSize
-                onValueChanged: buttonColumn.reflowWidths()
+                function onValueChanged(value) { buttonColumn.reflowWidths() }
             }
 
             function reflowWidths() {
@@ -86,8 +85,7 @@ Rectangle {
                 SubMenuButton {
                     id:                 subMenu
                     imageResource:      modelData.icon
-                    setupIndicator:     false
-                    exclusiveGroup:     setupButtonGroup
+                    autoExclusive:      true
                     text:               modelData.title
 
                     onClicked: {
@@ -128,7 +126,7 @@ Rectangle {
 
         Connections {
             target:     panelLoader.item
-            onPopout:   mainWindow.createrWindowedAnalyzePage(panelLoader.title, panelLoader.source)
+            function onPopout() { mainWindow.createrWindowedAnalyzePage(panelLoader.title, panelLoader.source) }
         }
     }
 }

@@ -26,7 +26,6 @@ class QNetworkAccessManager;
 class QGCCachedTileSet : public QObject
 {
     Q_OBJECT
-    Q_MOC_INCLUDE("QGCTile.h")
 
     Q_PROPERTY(QString      name                READ    name                NOTIFY nameChanged)
     Q_PROPERTY(QString      mapTypeStr          READ    mapTypeStr          CONSTANT)

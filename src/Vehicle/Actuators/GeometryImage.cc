@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2021 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,14 +9,14 @@
 
 #include "GeometryImage.h"
 
-#include <QDir>
-
+#include <QtCore/QDir>
+#include <QVector2D>
+#include <QVector3D>
 #include <array>
-
+#include <cmath>
 using namespace GeometryImage;
 
-
-static void generateTestGeometries(VehicleGeometryImageProvider& provider)
+static void generateTestGeometries([[maybe_unused]] VehicleGeometryImageProvider &provider)
 {
 #if 0 // enable this to generate a set of test geometry images on startup in the current working directory
     const QString imagePrefix = "test_geometry_";
@@ -163,8 +163,12 @@ void VehicleGeometryImageProvider::drawAxisIndicator(QPainter& p, const QPointF&
     }
 }
 
-QPixmap VehicleGeometryImageProvider::requestPixmap(const QString& id, QSize* size, const QSize& requestedSize)
+QPixmap VehicleGeometryImageProvider::requestPixmap([[maybe_unused]] const QString& id, QSize* size, const QSize& requestedSize)
 {
+    // For some reason even though we specify a sourceSize.width/height for the image the requestSize comes through at twice that size.
+    // Because of that we need to remember the requested size and use it later to scale click positions.
+
+    _imageSize = requestedSize;
     int width = requestedSize.width();
     int height = requestedSize.height();
     if (size)
@@ -270,7 +274,7 @@ QPixmap VehicleGeometryImageProvider::requestPixmap(const QString& id, QSize* si
             };
 
     // draw line from center to actuators first
-    iterateMotors(actuators, [&](const ActuatorGeometry& actuator, QPointF pos) {
+    iterateMotors(actuators, [&]([[maybe_unused]] const ActuatorGeometry& actuator, QPointF pos) {
         p.setPen(QPen{frameColor, frameWidth});
         p.drawLine(QPointF{offsetX, offsetY}, pos);
     });
@@ -395,13 +399,22 @@ VehicleGeometryImageProvider* VehicleGeometryImageProvider::instance()
     return instance;
 }
 
-int VehicleGeometryImageProvider::getHighlightedMotorIndexAtPos(const QPointF &position)
+int VehicleGeometryImageProvider::getHighlightedMotorIndexAtPos(const QSizeF& displaySize, const QPointF &position)
 {
+    // We have to scale the click position to take into account displaySize versus imageSize scaling
+    if (_imageSize.isEmpty()) {
+        qWarning() << "Image size is not set, cannot scale position";
+        return -1;
+    }
+    float scaleX = static_cast<float>(displaySize.width()) / _imageSize.width();
+    float scaleY = static_cast<float>(displaySize.height()) / _imageSize.height();
+    QPointF scaledPosition = QPointF{position.x() / scaleX, position.y() / scaleY};
+
     int foundIdx = -1;
     for (int i = 0; i < _actuatorImagePositions.size(); ++i) {
         if (_actuatorImagePositions[i].type == ActuatorGeometry::Type::Motor) {
             float radius = _actuatorImagePositions[i].radius;
-            if (QLineF{_actuatorImagePositions[i].position, position}.length() < radius) {
+            if (QLineF{_actuatorImagePositions[i].position, scaledPosition}.length() < radius) {
                 // in case of multiple matches (overlaps), be safe and do not return any match
                 if (foundIdx != -1) {
                     return -1;

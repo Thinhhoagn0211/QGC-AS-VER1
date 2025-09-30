@@ -40,8 +40,8 @@ private:
     };
 
     struct DesiredStreamRate {
-        const int messageId = 0;
-        const int rate = 0;
+        int messageId = 0;
+        int rate = 0;
     };
 
     void restoreNextDefault();

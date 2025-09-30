@@ -1,9 +1,9 @@
-import QtQuick                  2.12
-import QtQuick.Controls         1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
 
-import QGroundControl               1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
 
 Item {
     id:             _joyRoot
@@ -12,7 +12,7 @@ Item {
     property real   xAxis:                  0                   ///< Value range [-1,1], negative values left stick, positive values right stick
     property real   yAxis:                  0                   ///< Value range [-1,1], negative values down stick, positive values up stick
     property bool   yAxisPositiveRangeOnly: false               ///< true: value range [0,1], false: value range [-1,1]
-    property bool   yAxisReCenter:          true                ///< true: snaps back to center on release, false: stays at current position on release
+    property bool   yAxisReCenter:          false               ///< true: snaps back to center on release, false: stays at current position on release
     property real   xPositionDelta:         0                   ///< Amount to move the control on x axis
     property real   yPositionDelta:         0                   ///< Amount to move the control on y axis
 
@@ -23,45 +23,43 @@ Item {
     property real   _hatWidth:              ScreenTools.defaultFontPixelHeight
     property real   _hatWidthHalf:          _hatWidth / 2
     property bool   calculateYAxisMutex:    true
-    
     property real   stickPositionX:         _centerXY
-    property real   stickPositionY:         yAxisReCenter ? _centerXY : height
-    property bool   alreadyCreated:          false
-    signal stickMoved()
+    property real   stickPositionY:         !yAxisReCenter ? height : height / 2
+    property bool   alredyCreated:          false
+    
     QGCMapPalette { id: mapPal }
 
     onStickPositionXChanged:            calculateXAxis()
     onStickPositionYChanged:            calculateYAxis()
     onYAxisPositiveRangeOnlyChanged:    calculateYAxis()
     onYAxisReCenterChanged:             yAxisReCentered()     
-    onXAxisChanged: stickMoved()
-    onYAxisChanged: stickMoved()
-    onHeightChanged:                    { 
-                                            calculateYAxis()
-                                            reCenter() 
-                                        }
-    onWidthChanged:                     { 
-                                            calculateXAxis()
-                                            reCenter() 
-                                        }
-    //We prevent Joystick to move while the screen is resizing 
-
-
+    
     function yAxisReCentered() {
         if( yAxisReCenter ) {
             yAxis = yAxisPositiveRangeOnly ? 0.5 : 0
             stickPositionY = _joyRoot.height / 2
         }
-        if( !alreadyCreated && !yAxisReCenter ) {
+        if( !alredyCreated && !yAxisReCenter ) {
             yAxis = yAxisPositiveRangeOnly ? 0 : -1
             stickPositionY = _joyRoot.height            
         }
-        if ( alreadyCreated && !yAxisReCenter ){
+        if ( alredyCreated && !yAxisReCenter ){
             yAxis = yAxisPositiveRangeOnly ? 0.5 : 0
             stickPositionY = _joyRoot.height / 2
         }
-        alreadyCreated = true
+        alredyCreated = true
         return yAxis
+    }
+
+    //We prevent Joystick to move while the screen is resizing 
+    function resize( yPositionAfterResize ) {
+        if(_joyRoot.height <= 0) {
+            return;
+        }
+        calculateYAxisMutex = false
+        stickPositionY = ( 1 - ( ( yPositionAfterResize + ( !yAxisPositiveRangeOnly ? 1 : 0) ) /  ( yAxisPositiveRangeOnly ? 1 : 2 ) )) * _joyRoot.height // Reverse the CalculateYAxis Procedure
+        stickPositionX = _joyRoot.width / 2 // Manual recenter
+        calculateYAxisMutex = true
     }
 
     function calculateXAxis() {
@@ -78,6 +76,9 @@ Item {
         if(!_joyRoot.visible) {
             return;
         }
+        if(!calculateYAxisMutex) {
+            return;
+        }
         var fullRange = yAxisPositiveRangeOnly ? 1 : 2
         var pctUp = 1.0 - (stickPositionY / height)
         var rangeUp = pctUp * fullRange
@@ -87,19 +88,9 @@ Item {
         yAxis = rangeUp
     }
 
-    function resize( yPositionAfterResize ) {
-        if(_joyRoot.height <= 0) {
-            return;
-        }
-        calculateYAxisMutex = false
-        stickPositionY = ( 1 - ( ( yPositionAfterResize + ( !yAxisPositiveRangeOnly ? 1 : 0) ) /  ( yAxisPositiveRangeOnly ? 1 : 2 ) )) * _joyRoot.height // Reverse the CalculateYAxis Procedure
-        stickPositionX = _joyRoot.width / 2 // Manual recenter
-        calculateYAxisMutex = true
-    }
-
     function reCenter() {
         _processTouchPoints = false
-
+        _centerXY = _joyRoot.width / 2 // Reload before using it to make sure of using the right value
         // Move control back to original position
         xPositionDelta = 0
         yPositionDelta = 0
@@ -266,7 +257,7 @@ Item {
         minimumTouchPoints:     1
         maximumTouchPoints:     1
         touchPoints:            [ TouchPoint { id: touchPoint } ]
-        onPressed:              _joyRoot.thumbDown(touchPoints)
+        onPressed:              touchPoints => _joyRoot.thumbDown(touchPoints)
         onReleased:             _joyRoot.reCenter()
     }
 }

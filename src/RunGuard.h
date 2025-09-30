@@ -1,38 +1,41 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2025 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
+#pragma once
 
-#ifndef RunGuard_H
-#define RunGuard_H
-
-#include <QObject>
-#include <QSharedMemory>
-#include <QSystemSemaphore>
+#include <QtCore/QString>
+#include <QtCore/QLockFile>
 
 class RunGuard
 {
 public:
-    RunGuard( const QString& key );
+    explicit RunGuard(const QString &key);
     ~RunGuard();
 
+    // Returns true if another instance holds the lock.
     bool isAnotherRunning();
+
+    // Attempts to acquire the single-instance lock.
     bool tryToRun();
+
+    // Releases the lock if held.
     void release();
 
+    // Optional: returns true if this instance currently holds the lock.
+    bool isLocked() const { return _lockFile.isLocked(); }
+
 private:
-    const QString key;
-    const QString memLockKey;
-    const QString sharedmemKey;
+    static QString generateKeyHash(const QString &key, const QString &salt);
+    static QString lockDir();
 
-    QSharedMemory sharedMem;
-    QSystemSemaphore memLock;
+    const QString _key;
+    const QString _lockFilePath;
+    QLockFile _lockFile;
 
-    Q_DISABLE_COPY( RunGuard )
+    Q_DISABLE_COPY(RunGuard)
 };
-
-#endif

@@ -8,11 +8,11 @@
  ****************************************************************************/
 
 #include "QGeoFileTileCacheQGC.h"
-
+#include <mutex>
 #include <QtCore/QDir>
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QStandardPaths>
-
+#include<QtCore/QtMath>
 #include "AppSettings.h"
 #include "MapsSettings.h"
 #include "QGCApplication.h"

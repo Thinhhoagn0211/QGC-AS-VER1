@@ -7,7 +7,7 @@
  *
  ****************************************************************************/
 
-import QtQuick      2.3
+import QtQuick 2.4
 import QtQml.Models 2.1
 
 ObjectModel {

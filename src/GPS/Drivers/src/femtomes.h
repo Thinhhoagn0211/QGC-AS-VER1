@@ -215,8 +215,8 @@ private:
 	/**
 	 * update survery in status of QGC RTK GPS
 	 */
-	void sendSurveyInStatusUpdate(bool active, bool valid, double latitude = (double)NAN,
-				      double longitude = (double)NAN, float altitude = NAN);
+	void sendSurveyInStatusUpdate(bool active, bool valid, double latitude = (double)std::numeric_limits<double>::quiet_NaN(),
+				      double longitude = (double)std::numeric_limits<double>::quiet_NaN(), float altitude = std::numeric_limits<double>::quiet_NaN());
 
 
 	struct sensor_gps_s 	*_gps_position {nullptr};

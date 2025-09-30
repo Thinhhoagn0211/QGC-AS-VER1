@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -17,6 +17,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QVariantList>
 #include <QtPositioning/QGeoCoordinate>
+
 
 #include "HealthAndArmingCheckReport.h"
 #include "MAVLinkStreamConfig.h"
@@ -89,17 +90,6 @@ Q_DECLARE_LOGGING_CATEGORY(VehicleLog)
 class Vehicle : public VehicleFactGroup
 {
     Q_OBJECT
-    QML_ELEMENT
-    QML_UNCREATABLE("")
-    Q_MOC_INCLUDE("AutoPilotPlugin.h")
-    Q_MOC_INCLUDE("TrajectoryPoints.h")
-    Q_MOC_INCLUDE("ParameterManager.h")
-    Q_MOC_INCLUDE("VehicleObjectAvoidance.h")
-    Q_MOC_INCLUDE("Autotune.h")
-    Q_MOC_INCLUDE("RemoteIDManager.h")
-    Q_MOC_INCLUDE("Actuators.h")
-    Q_MOC_INCLUDE("MAVLinkLogManager.h")
-    Q_MOC_INCLUDE("LinkInterface.h")
 
     friend class InitialConnectStateMachine;
     friend class VehicleLinkManager;
@@ -1461,7 +1451,6 @@ private:
 /*                             Camera Manager                                */
 /*===========================================================================*/
 private:
-    Q_MOC_INCLUDE("QGCCameraManager.h")
     Q_PROPERTY(QGCCameraManager *cameraManager READ cameraManager NOTIFY cameraManagerChanged)
     Q_PROPERTY(QVariantList staticCameraList READ staticCameraList CONSTANT)
 

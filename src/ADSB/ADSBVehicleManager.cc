@@ -1,12 +1,11 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
-
 
 #include "ADSBVehicleManager.h"
 #include "QGCApplication.h"
@@ -17,13 +16,15 @@
 #include "QmlObjectListModel.h"
 #include "QGCLoggingCategory.h"
 
-#include <QtCore/QApplicationStatic>
+
 #include <QtCore/QTimer>
-#include <qassert.h>
+#include <QtCore/qglobal.h>
 
 QGC_LOGGING_CATEGORY(ADSBVehicleManagerLog, "qgc.adsb.adsbvehiclemanager")
 
-Q_APPLICATION_STATIC(ADSBVehicleManager, _adsbVehicleManager, SettingsManager::instance()->adsbVehicleManagerSettings());
+// Q_APPLICATION_STATIC(ADSBVehicleManager, _adsbVehicleManager, SettingsManager::instance()->adsbVehicleManagerSettings());
+Q_GLOBAL_STATIC_WITH_ARGS(ADSBVehicleManager, _adsbVehicleManager,
+                          (SettingsManager::instance()->adsbVehicleManagerSettings()))
 
 ADSBVehicleManager::ADSBVehicleManager(ADSBVehicleManagerSettings *settings, QObject *parent)
     : QObject(parent)
@@ -86,7 +87,7 @@ void ADSBVehicleManager::_handleADSBVehicle(const mavlink_message_t &message)
 
     ADSB::VehicleInfo_t vehicleInfo{};
 
-    vehicleInfo.availableFlags = ADSB::AvailableInfoTypes::fromInt(0);
+    vehicleInfo.availableFlags = {};
 
     vehicleInfo.icaoAddress = adsbVehicleMsg.ICAO_address;
     vehicleInfo.lastContact = adsbVehicleMsg.tslc;

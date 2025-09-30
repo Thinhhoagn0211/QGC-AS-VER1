@@ -8,21 +8,18 @@
  ****************************************************************************/
 
 
-import QtQuick                  2.3
-import QtQuick.Controls         1.2
-import QtQuick.Controls.Styles  1.4
-import QtQuick.Dialogs          1.2
-import QtQuick.Layouts          1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ArduPilot     1.0
-import QGroundControl.QGCPositionManager    1.0
+
+import QGroundControl.Controls  1.0
+
+
 
 SetupPage {
     id:             sensorsPage
@@ -89,7 +86,7 @@ SetupPage {
 
             function showOrientationsDialog(calType) {
                 var dialogTitle
-                var dialogButtons = StandardButton.Ok
+                var dialogButtons = Dialog.Ok
                 _showSimpleAccelCalOption = false
 
                 _orientationDialogCalType = calType
@@ -98,13 +95,13 @@ SetupPage {
                     _orientationsDialogShowCompass = true
                     _orientationDialogHelp = orientationHelpCal
                     dialogTitle = qsTr("Calibrate Compass")
-                    dialogButtons |= StandardButton.Cancel
+                    dialogButtons |= Dialog.Cancel
                     break
                 case _calTypeAccel:
                     _orientationsDialogShowCompass = false
                     _orientationDialogHelp = orientationHelpCal
                     dialogTitle = qsTr("Calibrate Accelerometer")
-                    dialogButtons |= StandardButton.Cancel
+                    dialogButtons |= Dialog.Cancel
                     break
                 case _calTypeSet:
                     _orientationsDialogShowCompass = true
@@ -167,8 +164,8 @@ SetupPage {
 
                 onCalibrationComplete: {
                     switch (calType) {
-                    case APMSensorsComponentController.CalTypeAccel:
-                    case APMSensorsComponentController.CalTypeOnboardCompass:
+                    case MAVLink.CalibrationAccel:
+                    case MAVLink.CalibrationMag:
                         _singleCompassSettingsComponentShowPriority = true
                         postOnboardCompassCalibrationComponent.createObject(mainWindow).open()
                         break
@@ -271,7 +268,7 @@ SetupPage {
                 QGCPopupDialog {
                     id:         postOnboardCompassCalibrationDialog
                     title:      qsTr("Calibration complete")
-                    buttons:    StandardButton.Ok
+                    buttons:    Dialog.Ok
 
                     Column {
                         width:      40 * ScreenTools.defaultFontPixelWidth
@@ -383,7 +380,7 @@ SetupPage {
 
                                 Component.onCompleted: selectPriorityfromParams()
 
-                                onActivated: {
+                                onActivated: (index) => {
                                     if (index == 3) {
                                         // User cannot select Not Set
                                         selectPriorityfromParams()
@@ -598,7 +595,7 @@ SetupPage {
 
                 QGCPopupDialog {
                     title:      qsTr("Compass Motor Interference Calibration")
-                    buttons:    StandardButton.Cancel | StandardButton.Ok
+                    buttons:    Dialog.Cancel | Dialog.Ok
 
                     onAccepted: controller.calibrateMotorInterference()
 
@@ -699,7 +696,7 @@ SetupPage {
                             } else {
                                 mainWindow.showMessageDialog(_levelHorizonText,
                                                              qsTr("To level the horizon you need to place the vehicle in its level flight position and press Ok."),
-                                                             StandardButton.Cancel | StandardButton.Ok,
+                                                             Dialog.Cancel | Dialog.Ok,
                                                              function() { controller.levelHorizon() })
                             }
                         }
@@ -711,7 +708,7 @@ SetupPage {
                         visible:    globals.activeVehicle && (globals.activeVehicle.multiRotor | globals.activeVehicle.rover | globals.activeVehicle.sub)
                         onClicked:  mainWindow.showMessageDialog(qsTr("Calibrate Gyro"),
                                                                  qsTr("For Gyroscope calibration you will need to place your vehicle on a surface and leave it still.\n\nClick Ok to start calibration."),
-                                                                 StandardButton.Cancel | StandardButton.Ok,
+                                                                 Dialog.Cancel | Dialog.Ok,
                                                                  function() { controller.calibrateGyro() })
                     }
 
@@ -720,7 +717,7 @@ SetupPage {
                         text:       _calibratePressureText
                         onClicked:  mainWindow.showMessageDialog(_calibratePressureText,
                                                                  qsTr("Pressure calibration will set the %1 to zero at the current pressure reading. %2").arg(_altText).arg(_helpTextFW),
-                                                                 StandardButton.Cancel | StandardButton.Ok,
+                                                                 Dialog.Cancel | Dialog.Ok,
                                                                  function() { controller.calibratePressure() })
 
                         readonly property string _altText:                  globals.activeVehicle.sub ? qsTr("depth") : qsTr("altitude")
@@ -792,13 +789,9 @@ SetupPage {
                         id:             statusTextArea
                         anchors.fill:   parent
                         readOnly:       true
-                        frameVisible:   false
                         text:           statusTextAreaDefaultText
-
-                        style: TextAreaStyle {
-                            textColor:          qgcPal.text
-                            backgroundColor:    qgcPal.windowShade
-                        }
+                        color:          qgcPal.text
+                        background:     Rectangle { color: qgcPal.windowShade }
                     }
 
                     Rectangle {

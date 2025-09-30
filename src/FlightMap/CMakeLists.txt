@@ -21,5 +21,4 @@ target_include_directories(FlightMap
 add_custom_target(FligthMapQml
 	FlightMap.qml
 	MapScale.qml
-	QGCVideoBackground.qml
 )

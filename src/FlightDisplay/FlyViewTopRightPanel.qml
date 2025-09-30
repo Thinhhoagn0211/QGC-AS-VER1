@@ -7,17 +7,15 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
- 
-import QGroundControl              1.0
-import QGroundControl.FactSystem 1.0
-import QGroundControl.FactControls 1.0
-import QGroundControl.Controls 1.0
-import QGroundControl.FlightDisplay 1.0
-import QGroundControl.FlightMap 1.0
-import QGroundControl.Palette 1.0
-import QGroundControl.ScreenTools 1.0
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
+
+import QGroundControl 1.0
+
+import QGroundControl.FactControls  1.0
+import QGroundControl.Controls  1.0
+import QGroundControl.FlightDisplay  1.0
+import QGroundControl.FlightMap  1.0
 
 
 

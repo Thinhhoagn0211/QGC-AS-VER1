@@ -51,12 +51,17 @@ bool QGeoTiledMapReplyQGC::init()
 
     _initDataFromResources();
 
-    (void) connect(this, &QGeoTiledMapReplyQGC::errorOccurred, this, [this](QGeoTiledMapReply::Error error, const QString &errorString) {
-        qCWarning(QGeoTiledMapReplyQGCLog) << error << errorString;
-        setMapImageData(_badTile);
-        setMapImageFormat(QStringLiteral("png"));
-        setCached(false);
-    }, Qt::AutoConnection);
+    (void) connect(this,
+               static_cast<void(QGeoTiledMapReplyQGC::*)(QGeoTiledMapReply::Error, const QString &)>(&QGeoTiledMapReplyQGC::error),
+               this,
+               [this](QGeoTiledMapReply::Error error, const QString &errorString) {
+                   qCWarning(QGeoTiledMapReplyQGCLog) << error << errorString;
+                   setMapImageData(_badTile);
+                   setMapImageFormat(QStringLiteral("png"));
+                   setCached(false);
+               },
+               Qt::AutoConnection);
+
 
     QGCFetchTileTask *task = QGeoFileTileCacheQGC::createFetchTileTask(UrlFactory::getProviderTypeFromQtMapId(tileSpec().mapId()), tileSpec().x(), tileSpec().y(), tileSpec().zoom());
     (void) connect(task, &QGCFetchTileTask::tileFetched, this, &QGeoTiledMapReplyQGC::_cacheReply);

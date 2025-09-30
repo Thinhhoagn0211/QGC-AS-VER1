@@ -9,8 +9,8 @@
 
 #include "QGCMapUrlEngine.h"
 
-#include <QtCore/QtMinMax>
-
+// #include <QtCore/QtMinMax>
+#include <memory>
 #include "BingMapProvider.h"
 #include "ElevationMapProvider.h"
 #include "EsriMapProvider.h"
@@ -18,7 +18,7 @@
 #include "GoogleMapProvider.h"
 #include "MapboxMapProvider.h"
 #include "QGCLoggingCategory.h"
-
+#include <QUrl>
 QGC_LOGGING_CATEGORY(QGCMapUrlEngineLog, "qgc.qtlocationplugin.qgcmapurlengine")
 
 const QList<SharedMapProvider> UrlFactory::_providers = {
@@ -74,7 +74,7 @@ const QList<SharedMapProvider> UrlFactory::_providers = {
     std::make_shared<CopernicusElevationProvider>()
 };
 
-QString UrlFactory::getImageFormat(int qtMapId, QByteArrayView image)
+QString UrlFactory::getImageFormat(int qtMapId, QByteArray image)
 {
     const SharedMapProvider provider = getMapProviderFromQtMapId(qtMapId);
     if (provider) {
@@ -84,7 +84,7 @@ QString UrlFactory::getImageFormat(int qtMapId, QByteArrayView image)
     return QString("");
 }
 
-QString UrlFactory::getImageFormat(QStringView type, QByteArrayView image)
+QString UrlFactory::getImageFormat(QStringView type, QByteArray image)
 {
     const SharedMapProvider provider = getMapProviderFromProviderType(type);
     if (provider) {

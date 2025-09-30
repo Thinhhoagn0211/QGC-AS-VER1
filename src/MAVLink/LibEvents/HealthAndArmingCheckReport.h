@@ -48,7 +48,6 @@ private:
 class HealthAndArmingCheckReport : public QObject
 {
     Q_OBJECT
-    Q_MOC_INCLUDE("QmlObjectListModel.h")
 public:
 
     Q_PROPERTY(bool supported                              READ supported               NOTIFY updated)

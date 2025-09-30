@@ -110,7 +110,7 @@ private:
 	void receiveWait(unsigned timeout_min);
 
 	void sendSurveyInStatusUpdate(bool active, bool valid, double latitude = static_cast<double>(std::numeric_limits<double>::quiet_NaN()),
-				      double longitude = static_cast<double>(std::numeric_limits<double>::quiet_NaN()), float altitude = std::numeric_limits<float>::quiet_NaN());
+				      double longitude = static_cast<double>(std::numeric_limits<double>::quiet_NaN()), float altitude = std::numeric_limits<double>::quiet_NaN());
 
 	/**
 	 * Write a command and wait for a (N)Ack

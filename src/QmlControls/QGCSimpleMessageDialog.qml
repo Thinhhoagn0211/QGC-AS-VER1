@@ -7,15 +7,17 @@
  *
  ****************************************************************************/
 
-import QtQuick          2.15
-import QtQuick.Layouts  1.15
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
 
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
 
 QGCPopupDialog {
     property alias  text:           label.text
     property var    acceptFunction: null        // Mainly used by MainRootWindow.showMessage to specify accept function in call
+    property var    closeFunction:  null
 
     onAccepted: {
         if (acceptFunction) {
@@ -23,10 +25,16 @@ QGCPopupDialog {
         }
     }
 
+    onClosed: {
+        if (closeFunction) {
+            closeFunction()
+        }
+    }
+
     ColumnLayout {
         QGCLabel {
             id:                     label
-            Layout.maximumWidth:    mainWindow.width / (ScreenTools.isMobile ? 2 : 3)
+            Layout.preferredWidth:  Math.max(mainWindow.width / (ScreenTools.isMobile ? 2 : 3), headerMinWidth)
             wrapMode:               Text.WordWrap
         }
     }

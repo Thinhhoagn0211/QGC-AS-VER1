@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -11,15 +11,13 @@
 /// @file
 ///     @author Don Gagne <don@thegagnes.com>
 
-#ifndef SENSORSCOMPONENTCONTROLLER_H
-#define SENSORSCOMPONENTCONTROLLER_H
+#pragma once
 
-#include <QObject>
-#include <QQuickItem>
+#include <QtQuick/QQuickItem>
+#include <QtCore/QLoggingCategory>
 
-#include "UASInterface.h"
+
 #include "FactPanelController.h"
-#include "QGCLoggingCategory.h"
 
 Q_DECLARE_LOGGING_CATEGORY(SensorsComponentControllerLog)
 
@@ -96,7 +94,7 @@ signals:
     void magCalComplete(void);
 
 private slots:
-    void _handleUASTextMessage(int uasId, int compId, int severity, QString text);
+    void _handleUASTextMessage(int uasId, int compId, int severity, QString text, const QString &description);
     void _handleParametersReset(bool success);
     
 private:
@@ -169,5 +167,3 @@ private:
     
     static const int _supportedFirmwareCalVersion = 2;
 };
-
-#endif

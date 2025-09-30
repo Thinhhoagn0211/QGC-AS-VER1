@@ -7,15 +7,14 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.3
-import QtQuick.Layouts 1.3
- 
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
+
 import QGroundControl 1.0
-import QGroundControl.ScreenTools 1.0
+import QGroundControl.Controls  1.0
 
 // ToolIndicatorPage
 //      The base control for all Toolbar Indicator drop down pages. It supports a normal and expanded view.
-
 
 RowLayout {
     id:         control

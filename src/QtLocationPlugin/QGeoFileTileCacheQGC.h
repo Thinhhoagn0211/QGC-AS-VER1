@@ -11,7 +11,7 @@
 
 #include <QtCore/QLoggingCategory>
 #include <QtLocation/private/qgeofiletilecache_p.h>
-
+#include <QtCore/QtMath>
 Q_DECLARE_LOGGING_CATEGORY(QGeoFileTileCacheQGCLog)
 
 class QGCFetchTileTask;

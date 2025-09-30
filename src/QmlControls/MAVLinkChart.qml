@@ -1,13 +1,11 @@
-import QtQuick                      2.11
-import QtQuick.Controls             2.4
-import QtQuick.Layouts              1.11
-import QtCharts                     2.3
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.2
+import QtCharts 2.3
 
-import QGroundControl               1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+
+import QGroundControl.Controls  1.0
 
 ChartView {
     id:                 chartView
@@ -19,19 +17,19 @@ ChartView {
     backgroundRoundness: 0
     margins.bottom:     ScreenTools.defaultFontPixelHeight * 1.5
     margins.top:        chartHeader.height + (ScreenTools.defaultFontPixelHeight * 2)
+    visible:            chartController.chartFields.length > 0
 
-    property var chartController:   null
-    property var seriesColors:      ["#00E04B","#DE8500","#F32836","#BFBFBF","#536DFF","#EECC44"]
+    required property var inspectorController
+    required property int chartIndex
+
+    property var _seriesColors: ["#00E04B","#DE8500","#F32836","#BFBFBF","#536DFF","#EECC44"]
 
     function addDimension(field) {
-        if(!chartController) {
-            chartController = controller.createChart()
-        }
-        var color   = chartView.seriesColors[chartView.count]
+        var color   = _seriesColors[chartView.count]
         var serie   = createSeries(ChartView.SeriesTypeLine, field.label)
         serie.axisX = axisX
         serie.axisY = axisY
-        serie.useOpenGL = true
+        serie.useOpenGL = QGroundControl.videoManager.gstreamerEnabled // Details on why here: https://github.com/mavlink/qgroundcontrol/issues/13068
         serie.color = color
         serie.width = 1
         chartController.addSeries(field, serie)
@@ -41,11 +39,17 @@ ChartView {
         if(chartController) {
             chartView.removeSeries(field.series)
             chartController.delSeries(field)
-            if(chartView.count === 0) {
-                controller.deleteChart(chartController)
-                chartController = null
-            }
         }
+    }
+
+    function roomForNewDimension() {
+        return chartController.chartFields.length < _seriesColors.length
+    }
+
+    MAVLinkChartController {
+        id:                     chartController
+        inspectorController:    chartView.inspectorController
+        chartIndex:             chartView.chartIndex
     }
 
     DateTimeAxis {
@@ -56,7 +60,7 @@ ChartView {
         format:                     "<br/>mm:ss.zzz"
         tickCount:                  5
         gridVisible:                true
-        labelsFont.family:          "Fixed"
+        labelsFont.family:          ScreenTools.fixedFontFamily
         labelsFont.pointSize:       ScreenTools.smallFontPointSize
         labelsColor:                qgcPal.text
     }
@@ -67,7 +71,7 @@ ChartView {
         max:                        chartController ? chartController.rangeYMax : 0
         visible:                    chartController !== null
         lineVisible:                false
-        labelsFont.family:          "Fixed"
+        labelsFont.family:          ScreenTools.fixedFontFamily
         labelsFont.pointSize:       ScreenTools.smallFontPointSize
         labelsColor:                qgcPal.text
     }
@@ -97,7 +101,7 @@ ChartView {
                 height:             ScreenTools.defaultFontPixelHeight
                 model:              controller.timeScales
                 currentIndex:       chartController ? chartController.rangeXIndex : 0
-                onActivated:        { if(chartController) chartController.rangeXIndex = index; }
+                onActivated: (index) => { if(chartController) chartController.rangeXIndex = index; }
                 Layout.alignment:   Qt.AlignVCenter
             }
             QGCLabel {
@@ -110,7 +114,7 @@ ChartView {
                 height:             ScreenTools.defaultFontPixelHeight
                 model:              controller.rangeList
                 currentIndex:       chartController ? chartController.rangeYIndex : 0
-                onActivated:        { if(chartController) chartController.rangeYIndex = index; }
+                onActivated: (index) => { if(chartController) chartController.rangeYIndex = index; }
                 Layout.alignment:   Qt.AlignVCenter
             }
         }

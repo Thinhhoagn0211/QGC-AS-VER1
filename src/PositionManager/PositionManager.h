@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,66 +9,96 @@
 
 #pragma once
 
-#include <QGeoPositionInfoSource>
-#include <QNmeaPositionInfoSource>
+#include <QtCore/QLoggingCategory>
+#include <QtCore/QObject>
+#include <QtPositioning/QGeoCoordinate>
+#include <QtPositioning/QGeoPositionInfo>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QtCore/QPermission>
+#endif
 
-#include <QVariant>
 
+Q_DECLARE_LOGGING_CATEGORY(QGCPositionManagerLog)
 
-#include "SimulatedPosition.h"
+class QGeoPositionInfoSource;
+class QNmeaPositionInfoSource;
+class QGCCompass;
 
-class QGCPositionManager : public QGCTool {
+class QGCPositionManager : public QObject
+{
     Q_OBJECT
+    
+    
+
+    Q_PROPERTY(QGeoCoordinate gcsPosition                   READ gcsPosition                    NOTIFY gcsPositionChanged)
+    Q_PROPERTY(qreal          gcsHeading                    READ gcsHeading                     NOTIFY gcsHeadingChanged)
+    Q_PROPERTY(qreal          gcsPositionHorizontalAccuracy READ gcsPositionHorizontalAccuracy  NOTIFY gcsPositionHorizontalAccuracyChanged)
 
 public:
-    static constexpr size_t MinHorizonalAccuracyMeters = 100;
-    QGCPositionManager(QGCApplication* app, QGCToolbox* toolbox);
+    explicit QGCPositionManager(QObject *parent = nullptr);
     ~QGCPositionManager();
 
-    Q_PROPERTY(QGeoCoordinate gcsPosition  READ gcsPosition  NOTIFY gcsPositionChanged)
-    Q_PROPERTY(qreal          gcsHeading   READ gcsHeading   NOTIFY gcsHeadingChanged)
-    Q_PROPERTY(qreal          gcsPositionHorizontalAccuracy  READ gcsPositionHorizontalAccuracy
-                                                             NOTIFY gcsPositionHorizontalAccuracyChanged)
+    /// Gets the singleton instance of AudioOutput.
+    ///     @return The singleton instance.
+    static QGCPositionManager *instance();
 
-    enum QGCPositionSource {
-        Simulated,
-        InternalGPS,
-        Log,
-        NmeaGPS
-    };
+    void init();
+    QGeoCoordinate gcsPosition() const { return _gcsPosition; }
+    qreal gcsHeading() const { return _gcsHeading; }
+    qreal gcsPositionHorizontalAccuracy() const { return _gcsPositionHorizontalAccuracy; }
+    QGeoPositionInfo geoPositionInfo() const { return _geoPositionInfo; }
+    int updateInterval() const { return _updateInterval; }
 
-    QGeoCoordinate      gcsPosition         (void) { return _gcsPosition; }
-    qreal               gcsHeading          (void) const{ return _gcsHeading; }
-    qreal               gcsPositionHorizontalAccuracy(void) const { return _gcsPositionHorizontalAccuracy; }
-    QGeoPositionInfo    geoPositionInfo     (void) const { return _geoPositionInfo; }
-    void                setPositionSource   (QGCPositionSource source);
-    int                 updateInterval      (void) const;
-    void                setNmeaSourceDevice (QIODevice* device);
-
-    // Overrides from QGCTool
-    void setToolbox(QGCToolbox* toolbox) override;
-
-
-private slots:
-    void _positionUpdated(const QGeoPositionInfo &update);
-    void _error(QGeoPositionInfoSource::Error positioningError);
+    void setNmeaSourceDevice(QIODevice *device);
 
 signals:
     void gcsPositionChanged(QGeoCoordinate gcsPosition);
     void gcsHeadingChanged(qreal gcsHeading);
     void positionInfoUpdated(QGeoPositionInfo update);
-    void gcsPositionHorizontalAccuracyChanged();
+    void gcsPositionHorizontalAccuracyChanged(qreal gcsPositionHorizontalAccuracy);
+
+private slots:
+    void _positionUpdated(const QGeoPositionInfo &update);
 
 private:
-    int                 _updateInterval =   0;
-    QGeoPositionInfo    _geoPositionInfo;
-    QGeoCoordinate      _gcsPosition;
-    qreal               _gcsHeading =       qQNaN();
-    qreal               _gcsPositionHorizontalAccuracy = std::numeric_limits<qreal>::infinity();
+    enum QGCPositionSource {
+        Simulated,
+        InternalGPS,
+        Log,
+        NmeaGPS,
+        ExternalGPS
+    };
 
-    QGeoPositionInfoSource*     _currentSource =        nullptr;
-    QGeoPositionInfoSource*     _defaultSource =        nullptr;
-    QNmeaPositionInfoSource*    _nmeaSource =           nullptr;
-    QGeoPositionInfoSource*     _simulatedSource =      nullptr;
-    bool                        _usingPluginSource =    false;
+        void _setPositionSource(QGCPositionSource source);
+        void _setupPositionSources();
+
+        #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            void _handlePermissionStatus(Qt::PermissionStatus permissionStatus);
+            void _checkPermission();
+        #endif
+
+            void _setGCSHeading(qreal newGCSHeading);
+            void _setGCSPosition(const QGeoCoordinate &newGCSPosition);
+
+    bool _usingPluginSource = false;
+    int _updateInterval = 0;
+
+    QGeoPositionInfo _geoPositionInfo;
+    QGeoCoordinate _gcsPosition;
+    qreal _gcsHeading = qQNaN();
+    qreal _gcsPositionHorizontalAccuracy = std::numeric_limits<qreal>::infinity();
+    qreal _gcsPositionVerticalAccuracy = std::numeric_limits<qreal>::infinity();
+    qreal _gcsPositionAccuracy = std::numeric_limits<qreal>::infinity();
+    qreal _gcsDirectionAccuracy = std::numeric_limits<qreal>::infinity();
+
+    QGeoPositionInfoSource *_currentSource = nullptr;
+    QGeoPositionInfoSource *_defaultSource = nullptr;
+    QNmeaPositionInfoSource *_nmeaSource = nullptr;
+    QGeoPositionInfoSource *_simulatedSource = nullptr;
+
+    QGCCompass *_compass = nullptr;
+
+    static constexpr qreal kMinHorizonalAccuracyMeters = 100.;
+    static constexpr qreal kMinVerticalAccuracyMeters = 10.;
+    static constexpr qreal kMinDirectionAccuracyDegrees = 30.;
 };

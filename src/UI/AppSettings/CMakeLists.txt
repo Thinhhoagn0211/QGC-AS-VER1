@@ -1,0 +1,25 @@
+add_custom_target(AppSettingsQml
+	SOURCES
+        ADSBServerSettings.qml
+        BluetoothSettings.qml
+        DebugWindow.qml
+        FlyViewSettings.qml
+        GeneralSettings.qml
+        HelpSettings.qml
+        LinkSettings.qml
+        LogReplaySettings.qml
+        MapSettings.qml
+        MockLink.qml
+        MockLinkSettings.qml
+        PlanViewSettings.qml
+        PX4LogTransferSettings.qml
+        QmlTest.qml
+        RemoteIDSettings.qml
+        SerialSettings.qml
+        SettingsPage.qml
+        SettingsPagesModel.qml
+        TcpSettings.qml
+        TelemetrySettings.qml
+        UdpSettings.qml
+        VideoSettings.qml
+)

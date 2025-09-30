@@ -17,7 +17,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QTemporaryFile>
-
+#include <cmath>
 int CopernicusElevationProvider::long2tileX(double lon, int z) const
 {
     Q_UNUSED(z)

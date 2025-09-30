@@ -7,19 +7,19 @@
  *
  ****************************************************************************/
 
-import QtQuick                      2.12
-import QtQuick.Layouts              1.12
+import QtQuick 2.4
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Vehicle       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Palette       1.0
+import QGroundControl 1.0
+
+
+import QGroundControl.Controls  1.0
+
 
 Rectangle {
-    height:     mainLayout.height + (_margins * 2)
-    visible:    false
-    color:      qgcPal.window
+    implicitHeight: mainLayout.height + (_margins * 2)
+    visible:        false
+    color:          qgcPal.window
 
     property var    _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
     property real   _margins:       ScreenTools.defaultFontPixelWidth / 2

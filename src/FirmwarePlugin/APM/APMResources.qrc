@@ -30,9 +30,8 @@
         <file alias="APMTuningComponentCopter.qml">../../AutoPilotPlugins/APM/APMTuningComponentCopter.qml</file>
         <file alias="APMTuningComponentSub.qml">../../AutoPilotPlugins/APM/APMTuningComponentSub.qml</file>
         <file alias="APMRemoteSupportComponent.qml">../../AutoPilotPlugins/APM/APMRemoteSupportComponent.qml</file>
-        <file alias="QGroundControl/ArduPilot/APMSensorParams.qml">APMSensorParams.qml</file>
-        <file alias="QGroundControl/ArduPilot/APMSensorIdDecoder.qml">APMSensorIdDecoder.qml</file>
-        <file alias="QGroundControl/ArduPilot/qmldir">QGroundControl.ArduPilot.qmldir</file>
+        <file alias="QGroundControl/ArduPilot/APMSensorParams.qml">../../AutoPilotPlugins/APM/APMSensorParams.qml</file>
+        <file alias="QGroundControl/ArduPilot/APMSensorIdDecoder.qml">../../AutoPilotPlugins/APM/APMSensorIdDecoder.qml</file>
     </qresource>
     <qresource prefix="/json">
         <file alias="APM-MavCmdInfoCommon.json">APM-MavCmdInfoCommon.json</file>
@@ -67,8 +66,5 @@
         <file alias="APMParameterFactMetaData.Sub.3.6.xml">ArduPilot-Parameter-Repository/Sub-3.6/apm.pdef.xml</file>
         <file alias="APMParameterFactMetaData.Sub.4.0.xml">ArduPilot-Parameter-Repository/Sub-4.0/apm.pdef.xml</file>
         <file alias="APMParameterFactMetaData.Sub.4.1.xml">ArduPilot-Parameter-Repository/Sub-4.1/apm.pdef.xml</file>
-        <file alias="Copter.OfflineEditing.params">Copter3.6.OfflineEditing.params</file>
-        <file alias="Plane.OfflineEditing.params">Plane3.9.OfflineEditing.params</file>
-        <file alias="Rover.OfflineEditing.params">Rover3.5.OfflineEditing.params</file>
     </qresource>
 </RCC>

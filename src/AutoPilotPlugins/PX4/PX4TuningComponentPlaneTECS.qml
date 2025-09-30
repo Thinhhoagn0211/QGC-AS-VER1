@@ -7,23 +7,26 @@
  *
  ****************************************************************************/
 
-import QtQuick          2.3
-import QtQuick.Controls 1.2
-import QtQuick.Layouts  1.2
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Vehicle       1.0
+
+
 
 ColumnLayout {
-    width: availableWidth
-    anchors.fill: parent
+    property real _availableHeight: availableHeight
+    property real _availableWidth:  availableWidth
 
     PIDTuning {
-        width: availableWidth
+        id:                 pidTuning
+        availableWidth:     _availableWidth
+        availableHeight:    _availableHeight - pidTuning.y
+
         property var data: QtObject {
             property string name: qsTr("Altitude & Airspeed")
             property var plot: [

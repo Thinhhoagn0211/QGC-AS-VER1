@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -8,8 +8,7 @@
  ****************************************************************************/
 
 
-#ifndef SENSORSCOMPONENT_H
-#define SENSORSCOMPONENT_H
+#pragma once
 
 #include "VehicleComponent.h"
 
@@ -48,8 +47,9 @@ private:
     QStringList     _deviceIds;
     QStringList     _airspeedCalTriggerParams;
 
-    static const char* _magEnabledParam;
-    static const char* _magCalParam;
+    static constexpr const char* _airspeedBreakerParam = "CBRK_AIRSPD_CHK";
+    static constexpr const char* _airspeedDisabledParam = "FW_ARSP_MODE";
+    static constexpr const char* _airspeedCalParam = "SENS_DPRES_OFF";
+    static constexpr const char* _magEnabledParam = "SYS_HAS_MAG";
+    static constexpr const char* _magCalParam = "CAL_MAG0_ID";
 };
-
-#endif

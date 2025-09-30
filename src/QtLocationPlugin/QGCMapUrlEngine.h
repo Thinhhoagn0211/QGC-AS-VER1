@@ -12,17 +12,17 @@
 #include "QGCTileSet.h"
 
 #include <QtCore/QObject>
-#include <QtCore/QByteArrayView>
+#include <QtCore/QByteArray>
 #include <QtCore/QStringView>
-
+#include <memory>
 class MapProvider;
 class ElevationProvider;
 
 class UrlFactory
 {
 public:
-    static QString getImageFormat(QStringView type, QByteArrayView image);
-    static QString getImageFormat(int qtMapId, QByteArrayView image);
+    static QString getImageFormat(QStringView type, QByteArray image);
+    static QString getImageFormat(int qtMapId, QByteArray image);
 
     static QUrl getTileURL(QStringView type, int x, int y, int zoom);
     static QUrl getTileURL(int qtMapId, int x, int y, int zoom);

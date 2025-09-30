@@ -11,17 +11,16 @@ add_library(Joystick
 	Joystick.cc
 	JoystickManager.cc
 	JoystickSDL.cc
-	JoystickMavCommand.cc
 	${EXTRA_SRC}
 )
 
 target_link_libraries(Joystick
         PRIVATE
 			Gimbal
-            ui
 	PUBLIC
 		qgc
-		ui
+		MAVLink
+		Vehicle
 )
 
 target_include_directories(Joystick PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

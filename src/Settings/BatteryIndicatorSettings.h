@@ -10,13 +10,14 @@
 #pragma once
 
 
+
 #include "SettingsGroup.h"
 
 class BatteryIndicatorSettings : public SettingsGroup
 {
     Q_OBJECT
-    QML_ELEMENT
-    QML_UNCREATABLE("")
+    
+    
 public:
     BatteryIndicatorSettings(QObject* parent = nullptr);
 

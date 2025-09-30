@@ -6,6 +6,10 @@ add_library(FollowMe
 target_link_libraries(FollowMe
 	PUBLIC
 		qgc
+		Vehicle
+		MAVLink
+		Qt5::Core
+		Qt5::Qml 
 )
 
 target_include_directories(FollowMe

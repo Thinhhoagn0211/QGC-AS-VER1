@@ -7,16 +7,15 @@
  *
  ****************************************************************************/
 
-import QtQuick                  2.12
-import QtLocation               5.3
-import QtPositioning            5.3
-import QtGraphicalEffects       1.0
+import QtQuick 2.4
+import QtLocation 5.3
+import QtPositioning 5.3
 
-import QGroundControl               1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Vehicle       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.FlightDisplay 1.0
+import QGroundControl 1.0
+
+
+import QGroundControl.Controls  1.0
+import QGroundControl.FlightDisplay  1.0
 
 MapQuickItem {
     id:             _root
@@ -48,9 +47,9 @@ MapQuickItem {
 
     Connections {
         target:             map
-        onWidthChanged:     scaleTimer.restart()
-        onHeightChanged:    scaleTimer.restart()
-        onZoomLevelChanged: scaleTimer.restart()
+        function onWidthChanged() { scaleTimer.restart() }
+        function onHeightChanged() { scaleTimer.restart() }
+        function onZoomLevelChanged() { scaleTimer.restart() }
     }
 
     Timer {

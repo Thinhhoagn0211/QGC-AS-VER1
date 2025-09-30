@@ -2,13 +2,15 @@ add_custom_target(FligthMapItemsQml
 	SOURCES
 		CameraTriggerIndicator.qml
 		CustomMapItems.qml
+		MapLineArrow.qml
 		MissionItemIndicatorDrag.qml
 		MissionItemIndicator.qml
-		MissionItemView.qml
 		MissionLineView.qml
 		PlanMapItems.qml
-		PolygonEditor.qml
 		ProximityRadarMapView.qml
 		SplitIndicator.qml
 		VehicleMapItem.qml
+		QGCMapCircleVisuals.qml
+		QGCMapPolygonVisuals.qml
+		QGCMapPolylineVisuals.qml
 )

@@ -7,15 +7,15 @@
  *
  ****************************************************************************/
 
-import QtQuick              2.3
-import QtLocation           5.3
-import QtPositioning        5.3
+import QtQuick 2.4
 import QtGraphicalEffects   1.0
+import QtLocation 5.3
+import QtPositioning 5.3
 
-import QGroundControl               1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Vehicle       1.0
-import QGroundControl.Controls      1.0
+import QGroundControl 1.0
+
+
+import QGroundControl.Controls  1.0
 
 /// Marker for displaying a vehicle location on the map
 MapQuickItem {
@@ -44,6 +44,25 @@ MapQuickItem {
         height:     vehicleIcon.height
         opacity:    _adsbVehicle || vehicle === _activeVehicle ? 1.0 : 0.5
 
+        Rectangle {
+            id:                 vehicleShadow
+            anchors.fill:       vehicleIcon
+            color:              Qt.rgba(1,1,1,1)
+            radius:             width * 0.5
+            visible:            false
+        }
+
+        DropShadow {
+            anchors.fill:       vehicleShadow
+            visible:            vehicleIcon.visible && _adsbVehicle
+            horizontalOffset:   4
+            verticalOffset:     4
+            radius:             32.0
+            samples:            65
+            color:              Qt.rgba(0.94,0.91,0,0.5)
+            source:             vehicleShadow
+        }
+            
         Repeater {
             model: vehicle ? vehicle.gimbalController.gimbals : [] 
             
@@ -106,23 +125,6 @@ MapQuickItem {
             }
         }
 
-        Rectangle {
-            id:                 vehicleShadow
-            anchors.fill:       vehicleIcon
-            color:              Qt.rgba(1,1,1,1)
-            radius:             width * 0.5
-            visible:            false
-        }
-        DropShadow {
-            anchors.fill:       vehicleShadow
-            visible:            vehicleIcon.visible && _adsbVehicle
-            horizontalOffset:   4
-            verticalOffset:     4
-            radius:             32.0
-            samples:            65
-            color:              Qt.rgba(0.94,0.91,0,0.5)
-            source:             vehicleShadow
-        }
         Image {
             id:                 vehicleIcon
             source:             _adsbVehicle ? (alert ? "/qmlimages/AlertAircraft.svg" : "/qmlimages/AwarenessAircraft.svg") : vehicle.vehicleImageOpaque
@@ -147,7 +149,7 @@ MapQuickItem {
             visible:                    _adsbVehicle ? !isNaN(altitude) : _multiVehicle
             property string vehicleLabelText: visible ?
                                                   (_adsbVehicle ?
-                                                       QGroundControl.unitsConversion.metersToAppSettingsHorizontalDistanceUnits(altitude).toFixed(0) + " " + QGroundControl.unitsConversion.appSettingsHorizontalDistanceUnitsString + "\n" + callsign :
+                                                       QGroundControl.unitsConversion.metersToAppSettingsVerticalDistanceUnits(altitude).toFixed(0) + " " + QGroundControl.unitsConversion.appSettingsHorizontalDistanceUnitsString + "\n" + callsign :
                                                        (_multiVehicle ? qsTr("Vehicle %1").arg(vehicle.id) : "")) :
                                                   ""
 

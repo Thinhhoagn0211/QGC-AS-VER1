@@ -7,18 +7,18 @@
  *
  ****************************************************************************/
 
-import QtQuick          2.3
-import QtQuick.Controls 2.12
-import QtQuick.Dialogs  1.3
-import QtQuick.Layouts  1.12
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
 
 QGCPopupDialog {
     title:   qsTr("Select Altitude Mode")
-    buttons: StandardButton.Close
+    buttons: Dialog.Close
 
     property var rgRemoveModes
     property var updateAltModeFn

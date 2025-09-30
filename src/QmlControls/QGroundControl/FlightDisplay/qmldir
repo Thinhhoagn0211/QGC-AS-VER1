@@ -12,7 +12,6 @@ FlyViewToolStripActionList      1.0 FlyViewToolStripActionList.qml
 FlyViewVideo                    1.0 FlyViewVideo.qml
 FlyViewWidgetLayer              1.0 FlyViewWidgetLayer.qml
 FlyViewInsetViewer              1.0 FlyViewInsetViewer.qml
-FlyViewTopRightPanel            1.0 FlyViewTopRightPanel.qml
 GuidedActionActionList          1.0 GuidedActionActionList.qml
 GuidedActionConfirm             1.0 GuidedActionConfirm.qml
 GuidedActionsController         1.0 GuidedActionsController.qml
@@ -40,7 +39,4 @@ ObstacleDistanceOverlayMap      1.0 ObstacleDistanceOverlayMap.qml
 ObstacleDistanceOverlayVideo    1.0 ObstacleDistanceOverlayVideo.qml
 GripperMenu                     1.0 GripperMenu.qml
 OnScreenGimbalController        1.0 OnScreenGimbalController.qml
-PageShowTelemetryUAV            1.0 PageShowTelemetryUAV.qml
-PageShowPlanFlightUAV           1.0 PageShowPlanFlightUAV.qml
-InfoBadge                       1.0 InfoBadge.qml
-CustomGuidedActionsController   1.0 CustomGuidedActionsController.qml
+FlightDisplayViewGStreamer      1.0 FlightDisplayViewGStreamer.qml

@@ -1,24 +1,24 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
 
-#ifndef FixedWingLandingComplexItem_H
-#define FixedWingLandingComplexItem_H
+#pragma once
+
+#include <QtCore/QLoggingCategory>
 
 #include "LandingComplexItem.h"
-#include "MissionItem.h"
 #include "Fact.h"
-#include "QGCLoggingCategory.h"
 
 Q_DECLARE_LOGGING_CATEGORY(FixedWingLandingComplexItemLog)
 
 class FWLandingPatternTest;
 class PlanMasterController;
+class MissionItem;
 
 class FixedWingLandingComplexItem : public LandingComplexItem
 {
@@ -36,10 +36,10 @@ public:
     Fact*           valueSetIsDistance      (void) { return &_valueSetIsDistanceFact; }
 
     /// Scans the loaded items for a landing pattern complex item
-    static bool scanForItem(QmlObjectListModel* visualItems, bool flyView, PlanMasterController* masterController);
+    static bool scanForItems(QmlObjectListModel* visualItems, bool flyView, PlanMasterController* masterController);
 
     // Overrides from ComplexMissionItem
-    QString patternName         (void) const final { return name; }
+    QString patternName         (void) const final;
     bool    load                (const QJsonObject& complexObject, int sequenceNumber, QString& errorString) final;
     QString mapVisualQML        (void) const final { return QStringLiteral("FWLandingPatternMapVisual.qml"); }
 
@@ -48,11 +48,11 @@ public:
 
     static const QString name;
 
-    static const char* jsonComplexItemTypeValue;
+    static constexpr const char* settingsGroup                      = "FixedWingLanding";
+    static constexpr const char* jsonComplexItemTypeValue           = "fwLandingPattern";
 
-    static const char* settingsGroup;
-    static const char* glideSlopeName;
-    static const char* valueSetIsDistanceName;
+    static constexpr const char* glideSlopeName                     = "GlideSlope";
+    static constexpr const char* valueSetIsDistanceName             = "ValueSetIsDistance";
 
 private slots:
     void _updateFlightPathSegmentsDontCallDirectly  (void) override;
@@ -64,6 +64,8 @@ private:
 
     // Overrides from LandingComplexItem
     const Fact*     _finalApproachAltitude  (void) const final { return &_finalApproachAltitudeFact; }
+    const Fact*     _useDoChangeSpeed       (void) const final { return &_useDoChangeSpeedFact; }
+    const Fact*     _finalApproachSpeed     (void) const final { return &_finalApproachSpeedFact; }
     const Fact*     _loiterRadius           (void) const final { return &_loiterRadiusFact; }
     const Fact*     _loiterClockwise        (void) const final { return &_loiterClockwiseFact; }
     const Fact*     _landingAltitude        (void) const final { return &_landingAltitudeFact; }
@@ -79,6 +81,8 @@ private:
 
     Fact            _landingDistanceFact;
     Fact            _finalApproachAltitudeFact;
+    Fact            _useDoChangeSpeedFact;
+    Fact            _finalApproachSpeedFact;
     Fact            _loiterRadiusFact;
     Fact            _loiterClockwiseFact;
     Fact            _landingHeadingFact;
@@ -89,9 +93,7 @@ private:
     Fact            _stopTakingVideoFact;
     Fact            _valueSetIsDistanceFact;
 
-    static const char* _jsonValueSetIsDistanceKey;
+    static constexpr const char* _jsonValueSetIsDistanceKey         = "valueSetIsDistance";
 
     friend FWLandingPatternTest;
 };
-
-#endif

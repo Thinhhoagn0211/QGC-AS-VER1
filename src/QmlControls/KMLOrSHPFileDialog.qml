@@ -7,16 +7,14 @@
  *
  ****************************************************************************/
 
-import QtQuick                          2.11
+import QtQuick 2.4
 
-import QGroundControl                   1.0
-import QGroundControl.Controls          1.0
-import QGroundControl.ShapeFileHelper   1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
 
 QGCFileDialog {
     id:             kmlOrSHPLoadDialog
     folder:         QGroundControl.settingsManager.appSettings.missionSavePath
-    title:          qsTr("Select Polygon File")
-    selectExisting: true
+    title:          qsTr("Select File")
     nameFilters:    ShapeFileHelper.fileDialogKMLOrSHPFilters
 }

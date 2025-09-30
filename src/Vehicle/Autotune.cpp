@@ -1,26 +1,20 @@
 /****************************************************************************
  *
- * (c) 2009-2021 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
 
-#include <QtGlobal>
-
-#include "QGCApplication.h"
 #include "Autotune.h"
-
+#include "QGCApplication.h"
 
 //-----------------------------------------------------------------------------
 Autotune::Autotune(Vehicle *vehicle) :
     QObject(vehicle)
     , _vehicle(vehicle)
 {
-    connect(_vehicle, &Vehicle::flyingChanged,  this, &Autotune::handleEnabled);
-    connect(_vehicle, &Vehicle::landingChanged, this, &Autotune::handleEnabled);
-
     _pollTimer.setInterval(1000); // 1s for the polling interval
     _pollTimer.setSingleShot(false);
     connect(&_pollTimer, &QTimer::timeout, this, &Autotune::sendMavlinkRequest);
@@ -81,20 +75,6 @@ void Autotune::progressHandler(void* progressHandlerData, int compId, const mavl
         qWarning() << "Ack received for a command different from MAV_CMD_DO_AUTOTUNE_ENABLE ot wrong UI state.";
     }
 }
-
-//-----------------------------------------------------------------------------
-bool Autotune::autotuneEnabled()
-{
-    return _vehicle->flying() || _autotuneInProgress;
-}
-
-
-//-----------------------------------------------------------------------------
-void Autotune::handleEnabled()
-{
-    emit autotuneChanged();
-}
-
 
 //-----------------------------------------------------------------------------
 void Autotune::handleAckStatus(uint8_t ackProgress)

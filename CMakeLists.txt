@@ -86,10 +86,12 @@ endif()
 # GStreamer
 #
 find_package(PkgConfig)
+
 set(GST_DEPENDENCIES
 	gstreamer-1.0>=1.14
 	gstreamer-video-1.0>=1.14
 	gstreamer-gl-1.0>=1.14
+	gstreamer-rtsp-1.0>=1.14
 	)
 
 if (MSVC)
@@ -104,16 +106,10 @@ else()
 endif()
 
 if (GST_FOUND)
-    add_definitions(
-        -DQGC_GST_STREAMING
-    )
-
-    option(QGC_GST_MICROHARD_ENABLED "Enable microhard" OFF)
-    option(QGC_GST_TAISYNC_ENABLED "Enable taisyng" OFF)
+    message(STATUS "✅ GStreamer FOUND, enabling QGC_GST_STREAMING")
+    add_definitions(-DQGC_GST_STREAMING)
 else()
-	if (QGC_GST_MICROHARD_ENABLED OR QGC_GST_TAISYNC_ENABLED)
-		message(FATAL_ERROR "You tried to enable Microhard or Taisync but gstreamer is not found. Make sure to set PKG_CONFIG_EXECUTABLE and/or PKG_CONFIG_PATH properly.")
-	endif()
+    message(STATUS "❌ GStreamer NOT found, disabling QGC_GST_STREAMING")
 endif()
 
 #=============================================================================
@@ -161,6 +157,8 @@ include_directories(
 	libs/eigen
 
 	libs/libevents
+	libs/libevents/libs/cpp
+
 
 	libs/mavlink/include/mavlink/v2.0
 	libs/mavlink/include/mavlink/v2.0/all
@@ -189,19 +187,13 @@ if (WIN32)
 		${CMAKE_CURRENT_SOURCE_DIR}/deploy/windows/QGroundControl.rc)
 endif()
 
-if(BUILD_TESTING)
-	list(APPEND QGC_RESOURCES
-		UnitTest.qrc
-	)
-endif()
-
 if(ANDROID)
 	add_library(QGroundControl SHARED ${QGC_RESOURCES})
 else()
 	add_executable(QGroundControl ${QGC_RESOURCES})
 endif()
 
-target_link_libraries(QGroundControl PRIVATE qgc)
+target_link_libraries(QGroundControl PUBLIC qgc)
 
 # Files/directories to install
 install(
@@ -231,9 +223,6 @@ install(
     DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo/
 )
 
-if(BUILD_TESTING)
-        target_link_libraries(QGroundControl PRIVATE Qt5::Test)
-endif()
 
 if(NOT QT_MKSPEC MATCHES "winrt")
 	target_link_libraries(QGroundControl

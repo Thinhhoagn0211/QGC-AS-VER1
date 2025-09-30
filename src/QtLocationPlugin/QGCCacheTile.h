@@ -15,6 +15,7 @@
 
 struct QGCCacheTile
 {
+    QGCCacheTile() = default;  
     QGCCacheTile(const QString &hash_, const QByteArray &img_, const QString &format_, const QString &type_, quint64 tileSet_ = UINT64_MAX)
         : tileSet(tileSet_)
         , hash(hash_)
@@ -33,5 +34,5 @@ struct QGCCacheTile
     const QString format;
     const QString type;
 };
-Q_DECLARE_METATYPE(QGCCacheTile)
+// Q_DECLARE_METATYPE(QGCCacheTile)
 Q_DECLARE_METATYPE(QGCCacheTile*)

@@ -7,24 +7,25 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.12
+import QtQuick 2.4
 
-import QGroundControl               1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
+
 
 Item {
-    id:         _root
-    visible:    QGroundControl.videoManager.hasVideo
+    id: _root
+
+    property Item pipView
+    property Item pipState: videoPipState
 
     property int    _track_rec_x:       0
     property int    _track_rec_y:       0
 
-    property Item pipState: videoPipState
-    QGCPipState {
+    PipState {
         id:         videoPipState
-        pipOverlay: _pipOverlay
+        pipView:    _root.pipView
         isDark:     true
 
         onWindowAboutToOpen: {
@@ -57,14 +58,14 @@ Item {
         id:             videoStreaming
         anchors.fill:   parent
         useSmallFont:   _root.pipState.state !== _root.pipState.fullState
-        visible:        QGroundControl.videoManager.isGStreamer
+        visible:        QGroundControl.videoManager.isStreamSource
     }
     //-- UVC Video (USB Camera or Video Device)
     Loader {
         id:             cameraLoader
         anchors.fill:   parent
-        visible:        !QGroundControl.videoManager.isGStreamer
-        source:         QGroundControl.videoManager.uvcEnabled ? "qrc:/qml/FlightDisplayViewUVC.qml" : "qrc:/qml/FlightDisplayViewDummy.qml"
+        visible:        QGroundControl.videoManager.isUvc
+        source:         QGroundControl.videoManager.uvcEnabled ? "qrc:/qml/QGroundControl/FlightDisplay/FlightDisplayViewUVC.qml" : "qrc:/qml/QGroundControl/FlightDisplay//FlightDisplayViewDummy.qml"
     }
 
     QGCLabel {
@@ -115,8 +116,7 @@ Item {
         onClicked:       onScreenGimbalController.clickControl()
         onDoubleClicked: QGroundControl.videoManager.fullScreen = !QGroundControl.videoManager.fullScreen
 
-
-        onPressed: {
+        onPressed:(mouse) => {
             onScreenGimbalController.pressControl()
 
             _track_rec_x = mouse.x
@@ -132,7 +132,7 @@ Item {
                 }
             }
         }
-        onPositionChanged: {
+        onPositionChanged: (mouse) => {
             //on move, update the width of rectangle
             if (trackingROI !== null) {
                 if (mouse.x < trackingROI.x) {
@@ -149,7 +149,7 @@ Item {
                 }
             }
         }
-        onReleased: {
+        onReleased: (mouse) => {
             onScreenGimbalController.releaseControl()
             
             //if there is already a selection, delete it

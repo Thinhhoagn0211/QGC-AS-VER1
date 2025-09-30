@@ -1,53 +1,64 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
 
-/// @file
-/// @brief SDL Joystick Interface
-
 #pragma once
 
-#include "Joystick.h"
-#include "Vehicle.h"
+#include <QtCore/QLoggingCategory>
 #include "MultiVehicleManager.h"
+#include "Joystick.h"
+#include <SDL.h> 
 
-#include <SDL.h>
+// struct SDL_Joystick;
+// typedef struct SDL_Joystick SDL_Joystick;
 
-/// @brief SDL Joystick Interface
+// struct _SDL_GameController;
+// typedef struct _SDL_GameController SDL_GameController;
+
+Q_DECLARE_LOGGING_CATEGORY(JoystickSDLLog)
+
 class JoystickSDL : public Joystick
 {
 public:
-    JoystickSDL(const QString& name, int axisCount, int buttonCount, int hatCount, int index, bool isGameController, MultiVehicleManager* multiVehicleManager);
+    explicit JoystickSDL(const QString& name,
+                         int axisCount,
+                         int buttonCount,
+                         int hatCount,
+                         int index,
+                         bool isGameController,
+                         MultiVehicleManager* multiVehicleManager);
+    ~JoystickSDL() override;
 
+    int instanceId() const { return _instanceId; }
+    void setInstanceId(int instanceId) { _instanceId = instanceId; }
+
+    // bool requiresCalibration() const final { return !_isGamepad; }
+    
+    static bool init();
     static QMap<QString, Joystick*> discover(MultiVehicleManager* _multiVehicleManager); 
-    static bool init(void);
-
-    int index(void) const { return _index; }
-    void setIndex(int index) { _index = index; }
-
-    // This can be uncommented to hide the calibration buttons for gamecontrollers in the future
-    // bool requiresCalibration(void) final { return !_isGameController; }
 
 private:
-    static void _loadGameControllerMappings();
+    bool _open() final;
+    void _close() final;
+    bool _update() final;
 
-    bool _open      () final;
-    void _close     () final;
-    bool _update    () final;
+    bool _getButton(int idx) const final;
+    int _getAxis(int idx) const final;
+    bool _getHat(int hat, int idx) const final;
 
-    bool _getButton (int i) final;
-    int  _getAxis   (int i) final;
-    bool _getHat    (int hat,int i) final;
+    static void _loadGamepadMappings();
 
+    QList<int> _gamepadAxes;
+    QList<int> _nonGamepadAxes;
+    bool _isGamepad = false;
+    int _instanceId = -1;
+    bool    _isGameController;
+    int     _index;
     SDL_Joystick*       sdlJoystick;
     SDL_GameController* sdlController;
-
-    bool    _isGameController;
-    int     _index;      ///< Index for SDL_JoystickOpen
-
 };

@@ -8,7 +8,7 @@
  ****************************************************************************/
 
 import QGroundControl 1.0
-import QGroundControl.Controls 1.0
+import QGroundControl.Controls  1.0
 
 SettingsButton {
     icon.color: setupComplete ? textColor : "red"

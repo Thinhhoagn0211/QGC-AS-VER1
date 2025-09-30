@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -21,6 +21,7 @@
 #include "VehicleLinkManager.h"
 #include "LinkInterface.h"
 #include "QmlObjectListModel.h"
+#include <QQmlEngine>
 #ifdef Q_OS_IOS
 #include "MobileScreenMgr.h"
 #elif defined(Q_OS_ANDROID)
@@ -28,12 +29,13 @@
 #endif
 #include "QGCLoggingCategory.h"
 
-#include <QtCore/QApplicationStatic>
+
 #include <QtCore/QTimer>
 
 QGC_LOGGING_CATEGORY(MultiVehicleManagerLog, "qgc.vehicle.multivehiclemanager")
 
-Q_APPLICATION_STATIC(MultiVehicleManager, _multiVehicleManagerInstance);
+// Q_APPLICATION_STATIC(MultiVehicleManager, _multiVehicleManagerInstance);
+Q_GLOBAL_STATIC(MultiVehicleManager, _multiVehicleManagerInstance);
 
 MultiVehicleManager::MultiVehicleManager(QObject *parent)
     : QObject(parent)
@@ -42,7 +44,7 @@ MultiVehicleManager::MultiVehicleManager(QObject *parent)
     , _selectedVehicles(new QmlObjectListModel(this))
 {
     qCDebug(MultiVehicleManagerLog) << this;
-
+    qmlRegisterUncreatableType<MultiVehicleManager>("QGroundControl.MultiVehicleManager", 1, 0, "MultiVehicleManager", "Reference only");
     (void) qRegisterMetaType<Vehicle::MavCmdResultFailureCode_t>("MavCmdResultFailureCode_t");
 }
 

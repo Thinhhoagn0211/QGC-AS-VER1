@@ -9,9 +9,9 @@
 
 #include "MapProvider.h"
 #include <QGCLoggingCategory.h>
-
+#include <cmath>
 #include <QtCore/QLocale>
-
+#include <QUrl>
 QGC_LOGGING_CATEGORY(MapProviderLog, "qgc.qtlocationplugin.mapprovider")
 
 // QtLocation expects MapIds to start at 1 and be sequential.
@@ -44,23 +44,23 @@ QUrl MapProvider::getTileURL(int x, int y, int zoom) const
     return QUrl(_getURL(x, y, zoom));
 }
 
-QString MapProvider::getImageFormat(QByteArrayView image) const
+QString MapProvider::getImageFormat(QByteArray image) const
 {
     if (image.size() < 3) {
         return QString();
     }
 
-    static constexpr QByteArrayView pngSignature("\x89\x50\x4E\x47\x0D\x0A\x1A\x0A");
+    static const QByteArray pngSignature("\x89\x50\x4E\x47\x0D\x0A\x1A\x0A");
     if (image.startsWith(pngSignature)) {
         return QStringLiteral("png");
     }
 
-    static constexpr QByteArrayView jpegSignature("\xFF\xD8\xFF");
+    static const QByteArray jpegSignature("\xFF\xD8\xFF");
     if (image.startsWith(jpegSignature)) {
         return QStringLiteral("jpg");
     }
 
-    static constexpr QByteArrayView gifSignature("\x47\x49\x46\x38");
+    static const QByteArray gifSignature("\x47\x49\x46\x38");
     if (image.startsWith(gifSignature)) {
         return QStringLiteral("gif");
     }

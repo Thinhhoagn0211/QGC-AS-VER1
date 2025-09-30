@@ -1,16 +1,15 @@
-
 add_library(PositionManager
-	PositionManager.cpp
-	SimulatedPosition.cc
+    PositionManager.cpp
+    PositionManager.h
+    SimulatedPosition.cc
+    SimulatedPosition.h
 )
 
 target_link_libraries(PositionManager
-	PUBLIC
-		qgc
+    PUBLIC
+        qgc
+    PRIVATE
+        Qt5::Core
 )
 
-target_include_directories(PositionManager
-	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}
-	)
-
+target_include_directories(PositionManager INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

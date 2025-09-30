@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -496,7 +496,11 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     }
     _ftpManager->_mavlinkMessageReceived(message);
     _parameterManager->mavlinkMessageReceived(message);
-    (void) QMetaObject::invokeMethod(_imageProtocolManager, "mavlinkMessageReceived", Qt::AutoConnection, message);
+    QMetaObject::invokeMethod(
+    _imageProtocolManager,
+    "mavlinkMessageReceived",
+    Qt::AutoConnection,
+    Q_ARG(const mavlink_message_t&, message));
     _remoteIDManager->mavlinkMessageReceived(message);
 
     _waitForMavlinkMessageMessageReceivedHandler(message);
@@ -1931,10 +1935,10 @@ bool Vehicle::sub() const
     return QGCMAVLink::isSub(vehicleType());
 }
 
-bool Vehicle::spacecraft() const
-{
-    return QGCMAVLink::isSpacecraft(vehicleType());
-}
+// bool Vehicle::spacecraft() const
+// {
+//     return QGCMAVLink::isSpacecraft(vehicleType());
+// }
 
 bool Vehicle::multiRotor() const
 {
@@ -2412,7 +2416,11 @@ void Vehicle::sendMavCommand(int compId, MAV_CMD command, bool showError, float 
 
 void Vehicle::sendMavCommandDelayed(int compId, MAV_CMD command, bool showError, int milliseconds, float param1, float param2, float param3, float param4, float param5, float param6, float param7)
 {
-    QTimer::singleShot(milliseconds, this, [=, this] { sendMavCommand(compId, command, showError, param1, param2, param3, param4, param5, param6, param7); });
+    // QTimer::singleShot(milliseconds, this, [=, this] { sendMavCommand(compId, command, showError, param1, param2, param3, param4, param5, param6, param7); });
+    QTimer::singleShot(milliseconds, this, [=] {
+    sendMavCommand(compId, command, showError,
+                   param1, param2, param3, param4, param5, param6, param7);
+});
 }
 
 void Vehicle::sendCommand(int compId, int command, bool showError, double param1, double param2, double param3, double param4, double param5, double param6, double param7)
@@ -4017,7 +4025,8 @@ void Vehicle::requestOperatorControl(bool allowOverride, int requestTimeoutSecs)
     sendMavCommandWithHandler(
         &handlerInfo,
         _defaultComponentId,
-        MAV_CMD_REQUEST_OPERATOR_CONTROL,
+        // MAV_CMD_REQUEST_OPERATOR_CONTROL,
+        MAV_CMD_DO_ORBIT,
         0,                                  // System ID of GCS requesting control, 0 if it is this GCS
         1,                                  // Action - 0: Release control, 1: Request control.
         allowOverride ? 1 : 0,              // Allow takeover - Enable automatic granting of ownership on request. 0: Ask current owner and reject request, 1: Allow automatic takeover.
@@ -4126,7 +4135,8 @@ void Vehicle::_handleCommandLong(const mavlink_message_t& message)
     if (commandLong.target_system != MAVLinkProtocol::instance()->getSystemId()) {
         return;
     }
-    if (commandLong.command == MAV_CMD_REQUEST_OPERATOR_CONTROL) {
+    // if (commandLong.command == MAV_CMD_REQUEST_OPERATOR_CONTROL) {
+    if (commandLong.command == 101) {
         _handleCommandRequestOperatorControl(commandLong);
     }
 }

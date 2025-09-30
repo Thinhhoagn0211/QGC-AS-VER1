@@ -10,7 +10,7 @@
 #include "GenericMapProvider.h"
 #include "SettingsManager.h"
 #include "AppSettings.h"
-
+#include <cmath>
 QString CustomURLMapProvider::_getURL(int x, int y, int zoom) const
 {
     QString url = SettingsManager::instance()->appSettings()->customURL()->rawValue().toString();

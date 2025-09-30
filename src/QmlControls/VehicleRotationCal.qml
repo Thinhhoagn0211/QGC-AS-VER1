@@ -8,12 +8,12 @@
  ****************************************************************************/
 
 
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.4
+import QtQuick 2.4
+import QtQuick.Controls 2.2
 
-import QGroundControl.Palette 1.0
-import QGroundControl.ScreenTools 1.0
+import QGroundControl 1.0
+import QGroundControl.Controls  1.0
+
 
 Rectangle {
     // Indicates whether calibration is valid for this control

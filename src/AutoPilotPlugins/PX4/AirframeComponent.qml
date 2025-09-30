@@ -8,17 +8,17 @@
  ****************************************************************************/
 
 
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.4
+import QtQuick 2.4
+import QtQuick.Controls 2.2
 import QtQuick.Dialogs 1.2
 
-import QGroundControl.FactSystem 1.0
-import QGroundControl.FactControls 1.0
-import QGroundControl.Palette 1.0
-import QGroundControl.Controls 1.0
-import QGroundControl.Controllers 1.0
-import QGroundControl.ScreenTools 1.0
+import QGroundControl 1.0
+
+import QGroundControl.FactControls  1.0
+
+import QGroundControl.Controls  1.0
+
+
 
 SetupPage {
     id:             airframePage
@@ -109,8 +109,8 @@ SetupPage {
                     text:           (controller.currentVehicleName != "" ?
                                          qsTr("You've connected a %1.").arg(controller.currentVehicleName) :
                                          qsTr("Airframe is not set.")) +
-                                    qsTr("To change this configuration, select the desired airframe below then click 'Apply and Restart'.")
-                    font.family:    ScreenTools.demiboldFontFamily
+                                    qsTr(" To change this configuration, select the desired airframe below then click 'Apply and Restart'.")
+                    font.bold:      true
                     wrapMode:       Text.WordWrap
                 }
 
@@ -122,7 +122,7 @@ SetupPage {
                                                                  qsTr("Clicking 'Apply' will save the changes you have made to your airframe configuration.<br><br>\
                                                                         All vehicle parameters other than Radio Calibration will be reset.<br><br>\
                                                                         Your vehicle will also be restarted in order to complete the process."),
-                                                                 StandardButton.Apply | StandardButton.Cancel,
+                                                                 Dialog.Apply | Dialog.Cancel,
                                                                  function() { controller.changeAutostart() })
 
                 }
@@ -139,7 +139,7 @@ SetupPage {
                 width:      parent.width
                 spacing:    _boxSpace
 
-                ExclusiveGroup {
+                ButtonGroup {
                     id: airframeTypeExclusive
                 }
 
@@ -194,7 +194,7 @@ SetupPage {
                                 // Although this item is invisible we still use it to manage state
                                 id:             airframeCheckBox
                                 checked:        modelData.name === controller.currentAirframeType
-                                exclusiveGroup: airframeTypeExclusive
+                                buttonGroup: airframeTypeExclusive
                                 visible:        false
 
                                 onCheckedChanged: {
@@ -221,7 +221,7 @@ SetupPage {
                                     }
                                 }
 
-                                onActivated: {
+                                onActivated: (index) => {
                                     applyButton.primary = true
                                     airframeCheckBox.checked = true;
                                     console.log("combo change", index)

@@ -7,18 +7,18 @@
  *
  ****************************************************************************/
 
-import QtQuick          2.3
-import QtQuick.Controls 2.4
-import QtQuick.Dialogs  1.2
-import QtQuick.Layouts  1.11
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.ScreenTools   1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.Palette       1.0
+import QGroundControl.Controls  1.0
+
+
+
 
 SetupPage {
     id:             radioPage
@@ -58,7 +58,7 @@ SetupPage {
 
                 QGCPopupDialog {
                     title:      qsTr("Spektrum Bind")
-                    buttons:    StandardButton.Ok | StandardButton.Cancel
+                    buttons:    Dialog.Ok | Dialog.Cancel
 
                     onAccepted: { controller.spektrumBindMode(radioGroup.checkedButton.bindMode) }
 
@@ -199,7 +199,7 @@ SetupPage {
                         Connections {
                             target: controller
 
-                            onRollChannelRCValueChanged: rollLoader.item.rcValue = rcValue
+                            function onRollChannelRCValueChanged(rcValue) { rollLoader.item.rcValue = rcValue }
                         }
                     }
 
@@ -228,7 +228,7 @@ SetupPage {
                         Connections {
                             target: controller
 
-                            onPitchChannelRCValueChanged: pitchLoader.item.rcValue = rcValue
+                            function onPitchChannelRCValueChanged(rcValue) { pitchLoader.item.rcValue = rcValue }
                         }
                     }
 
@@ -257,7 +257,7 @@ SetupPage {
                         Connections {
                             target: controller
 
-                            onYawChannelRCValueChanged: yawLoader.item.rcValue = rcValue
+                            function onYawChannelRCValueChanged(rcValue) { yawLoader.item.rcValue = rcValue }
                         }
                     }
 
@@ -285,7 +285,7 @@ SetupPage {
 
                         Connections {
                             target:                             controller
-                            onThrottleChannelRCValueChanged:    throttleLoader.item.rcValue = rcValue
+                            function onThrottleChannelRCValueChanged(rcValue) { throttleLoader.item.rcValue = rcValue }
                         }
                     }
                 } // Column - Attitude Control labels
@@ -323,7 +323,7 @@ SetupPage {
                                     mainWindow.showMessageDialog(qsTr("Zero Trims"),
                                                                  qsTr("Before calibrating you should zero all your trims and subtrims. Click Ok to start Calibration.\n\n%1").arg(
                                                                      (QGroundControl.multiVehicleManager.activeVehicle.px4Firmware ? "" : qsTr("Please ensure all motor power is disconnected AND all props are removed from the vehicle."))),
-                                                                 StandardButton.Ok,
+                                                                 Dialog.Ok,
                                                                  function() { controller.nextButtonClicked() })
                                 }
                             } else {
@@ -349,12 +349,10 @@ SetupPage {
 
                 QGCLabel { text: qsTr("Additional Radio setup:") }
 
-                GridLayout {
+                ColumnLayout {
                     id:                 switchSettingsGrid
                     anchors.left:       parent.left
                     anchors.right:      parent.right
-                    columns:            2
-                    columnSpacing:      ScreenTools.defaultFontPixelWidth
 
                     Repeater {
                         model: QGroundControl.multiVehicleManager.activeVehicle.px4Firmware ?
@@ -363,20 +361,10 @@ SetupPage {
                                         [ "RC_MAP_FLAPS", "RC_MAP_AUX1", "RC_MAP_AUX2", "RC_MAP_PARAM1", "RC_MAP_PARAM2", "RC_MAP_PARAM3"]) :
                                    0
 
-                        RowLayout {
-                            Layout.fillWidth: true
-
-                            property Fact fact: controller.getParameterFact(-1, modelData)
-
-                            QGCLabel {
-                                Layout.fillWidth:   true
-                                text:               fact.shortDescription
-                            }
-                            FactComboBox {
-                                width:      ScreenTools.defaultFontPixelWidth * 15
-                                fact:       parent.fact
-                                indexModel: false
-                            }
+                        LabelledFactComboBox {
+                            label:               fact.shortDescription
+                            fact:                controller.getParameterFact(-1, modelData)
+                            indexModel:          false
                         }
                     }
                 }
@@ -389,10 +377,18 @@ SetupPage {
                     }
 
                     QGCButton {
+                        text:       qsTr("CRSF Bind")
+                        onClicked:  mainWindow.showMessageDialog(qsTr("CRSF Bind"),
+                                                                 qsTr("Click Ok to place your CRSF receiver in the bind mode."),
+                                                                 Dialog.Ok | Dialog.Cancel,
+                                                                 function() { controller.crsfBindMode() })
+                    }
+
+                    QGCButton {
                         text:       qsTr("Copy Trims")
                         onClicked:  mainWindow.showMessageDialog(qsTr("Copy Trims"),
                                                                  qsTr("Center your sticks and move throttle all the way down, then press Ok to copy trims. After pressing Ok, reset the trims on your radio back to zero."),
-                                                                 StandardButton.Ok | StandardButton.Cancel,
+                                                                 Dialog.Ok | Dialog.Cancel,
                                                                  function() { controller.copyTrims() })
                     }
                 }

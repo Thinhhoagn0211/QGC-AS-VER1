@@ -31,7 +31,7 @@ public:
     QGeoRoutingManagerEngine* createRoutingManagerEngine(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const final;
     QPlaceManagerEngine* createPlaceManagerEngine(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const final;
 
-    void setQmlEngine(QQmlEngine* engine) final { m_engine = engine; }
+    void setQmlEngine(QQmlEngine* engine) { m_engine = engine; }
 
 private:
     QQmlEngine *m_engine = nullptr;

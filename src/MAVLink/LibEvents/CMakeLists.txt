@@ -1,22 +1,13 @@
-target_sources(${CMAKE_PROJECT_NAME}
-    PRIVATE
-        EventHandler.cc
-        EventHandler.h
-        HealthAndArmingCheckReport.cc
-        HealthAndArmingCheckReport.h
-        logging.cpp
+add_library(LibEvents
+    EventHandler.cc
+    EventHandler.h
+    HealthAndArmingCheckReport.cc
+    HealthAndArmingCheckReport.h
+    libevents_includes.h
+    logging.cpp
 )
 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(LibEvents PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-#===========================================================================#
-
-CPMAddPackage(
-    NAME libevents
-    GITHUB_REPOSITORY mavlink/libevents
-    GIT_TAG main
-    SOURCE_SUBDIR libs/cpp
-)
-
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE libevents)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${libevents_SOURCE_DIR}/libs/cpp)
+target_link_libraries(LibEvents PUBLIC libevents_generated libevents_parser libevents_health_and_arming_checks Qt5::Core MAVLink)
+target_include_directories(LibEvents PUBLIC libs/libevents/libs/cpp)

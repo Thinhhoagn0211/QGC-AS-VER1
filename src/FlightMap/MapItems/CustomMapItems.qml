@@ -7,14 +7,14 @@
  *
  ****************************************************************************/
 
-import QtQuick          2.3
-import QtLocation       5.3
-import QtPositioning    5.3
+import QtQuick 2.4
+import QtLocation 5.3
+import QtPositioning 5.3
 
-import QGroundControl           1.0
+import QGroundControl 1.0
 import QGroundControl.Controls  1.0
-import QGroundControl.FlightMap 1.0
-import QGroundControl.Vehicle   1.0
+import QGroundControl.FlightMap  1.0
+
 
 // Allow custom builds to add visual items associated with the Flight Plan to the map
 Item {

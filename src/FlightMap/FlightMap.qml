@@ -7,21 +7,20 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.15           
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.2
 import QtLocation 5.3
 import QtPositioning 5.3
 import QtQuick.Dialogs 1.2
+import Qt.labs.animation 1.0
 
-import QGroundControl                       1.0
-import QGroundControl.FactSystem            1.0
-import QGroundControl.Controls              1.0
-import QGroundControl.FlightMap             1.0
-import QGroundControl.ScreenTools           1.0
-import QGroundControl.MultiVehicleManager   1.0
-import QGroundControl.Vehicle               1.0
-import QGroundControl.QGCPositionManager    1.0
+import QGroundControl 1.0
+
+import QGroundControl.Controls  1.0
+import QGroundControl.FlightMap  1.0
+
+
+
 
 Map {
     id: _map

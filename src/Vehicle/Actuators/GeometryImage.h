@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2021 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,19 +9,13 @@
 
 #pragma once
 
-#include <QObject>
-#include <QString>
-
-#include <functional>
-#include <cmath>
-
-#include <QQuickImageProvider>
-#include <QVector2D>
-#include <QPainter>
-
-#include <QGCPalette.h>
-
+#include "QGCPalette.h"
 #include "Common.h"
+
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtQuick/QQuickImageProvider>
+#include <QtGui/QPainter>
 
 
 namespace GeometryImage {
@@ -46,7 +40,7 @@ public:
 
     static VehicleGeometryImageProvider* instance();
 
-    int getHighlightedMotorIndexAtPos(const QPointF& position);
+    int getHighlightedMotorIndexAtPos(const QSizeF& displaySize, const QPointF& position);
 
     QList<ActuatorGeometry>& actuators() { return _actuators; }
 
@@ -58,8 +52,9 @@ private:
 
     QList<ActuatorGeometry> _actuators{};
 
-    QList<ImagePosition> _actuatorImagePositions{}; ///< highlighted actuators image positions
-    QGCPalette           _palette;
+    QSize                   _imageSize;                 ///< size of the image requested, used to scale click positions
+    QList<ImagePosition>    _actuatorImagePositions{};  ///< highlighted actuators image positions
+    QGCPalette              _palette;
 };
 
 } // namespace GeometryImage

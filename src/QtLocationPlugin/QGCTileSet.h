@@ -10,7 +10,9 @@
 #pragma once
 
 #include <QtCore/QMetaType>
-#include <QtCore/QtTypes>
+#include <QtCore/qglobal.h>  
+#include <cstddef>          
+#include <cstdint>   
 
 struct QGCTileSet
 {

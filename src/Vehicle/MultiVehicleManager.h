@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -15,7 +15,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QLoggingCategory>
-
+#include "Vehicle.h"
 
 class LinkInterface;
 class Vehicle;
@@ -27,11 +27,6 @@ Q_DECLARE_LOGGING_CATEGORY(MultiVehicleManagerLog)
 class MultiVehicleManager : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
-    QML_UNCREATABLE("")
-    Q_MOC_INCLUDE("QmlObjectListModel.h")
-    Q_MOC_INCLUDE("LinkInterface.h")
-    Q_MOC_INCLUDE("Vehicle.h")
     Q_PROPERTY(bool                 activeVehicleAvailable          READ _getActiveVehicleAvailable                                         NOTIFY activeVehicleAvailableChanged)
     Q_PROPERTY(bool                 parameterReadyVehicleAvailable  READ _getParameterReadyVehicleAvailable                                 NOTIFY parameterReadyVehicleAvailableChanged)
     Q_PROPERTY(Vehicle              *activeVehicle                  READ activeVehicle                      WRITE setActiveVehicle          NOTIFY activeVehicleChanged)

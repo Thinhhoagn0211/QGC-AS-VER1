@@ -7,10 +7,11 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.3
+import QtQuick 2.4
 
+import QGroundControl 1.0
 import QGroundControl.Controls  1.0
-import QGroundControl.PX4       1.0
+import QGroundControl.AutoPilotPlugins.PX4
 
 SetupPage {
     pageComponent:  pageComponent

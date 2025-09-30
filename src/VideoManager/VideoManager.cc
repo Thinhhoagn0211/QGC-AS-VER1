@@ -1,12 +1,17 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
 
+#ifdef QGC_GST_STREAMING
+#   pragma message("✅ QGC_GST_STREAMING ENABLED in VideoManager")
+#else
+#   pragma message("❌ QGC_GST_STREAMING DISABLED in VideoManager")
+#endif
 
 #include "VideoManager.h"
 #include "AppSettings.h"
@@ -26,10 +31,10 @@
 #else
 #include "VideoItemStub.h"
 #endif
-#include "QtMultimediaReceiver.h"
-#include "UVCReceiver.h"
+// #include "QtMultimediaReceiver.h"
+// #include "UVCReceiver.h"
 
-#include <QtCore/QApplicationStatic>
+#include <QtCore/qmath.h>
 #include <QtCore/QDir>
 #include <QtQml/QQmlEngine>
 #include <QtQuick/QQuickItem>
@@ -44,7 +49,8 @@ static constexpr const char *kFileExtension[VideoReceiver::FILE_FORMAT_MAX + 1] 
     "mp4"
 };
 
-Q_APPLICATION_STATIC(VideoManager, _videoManagerInstance);
+// Q_APPLICATION_STATIC(VideoManager, _videoManagerInstance);
+Q_GLOBAL_STATIC(VideoManager, _videoManagerInstance);
 
 VideoManager::VideoManager(QObject *parent)
     : QObject(parent)
@@ -283,7 +289,7 @@ bool VideoManager::hasVideo() const
 
 bool VideoManager::isUvc() const
 {
-    return (!_uvcVideoSourceID.isEmpty() && uvcEnabled() && hasVideo());
+    return (!_uvcVideoSourceID.isEmpty() && hasVideo());
 }
 
 bool VideoManager::gstreamerEnabled()
@@ -295,15 +301,15 @@ bool VideoManager::gstreamerEnabled()
 #endif
 }
 
-bool VideoManager::uvcEnabled()
-{
-    return UVCReceiver::enabled();
-}
+// bool VideoManager::uvcEnabled()
+// {
+//     return UVCReceiver::enabled();
+// }
 
-bool VideoManager::qtmultimediaEnabled()
-{
-    return QtMultimediaReceiver::enabled();
-}
+// bool VideoManager::qtmultimediaEnabled()
+// {
+//     return QtMultimediaReceiver::enabled();
+// }
 
 void VideoManager::setfullScreen(bool on)
 {
@@ -381,17 +387,18 @@ bool VideoManager::_updateUVC(VideoReceiver *receiver)
 
     const QString oldUvcVideoSrcID = _uvcVideoSourceID;
 
-    if (!uvcEnabled() || !hasVideo() || isStreamSource()) {
+    if (!hasVideo() || isStreamSource()) {
         _uvcVideoSourceID = QString();
-    } else {
-        _uvcVideoSourceID = UVCReceiver::getSourceId();
     }
+    // } else {
+    //     _uvcVideoSourceID = UVCReceiver::getSourceId();
+    // }
 
     if (oldUvcVideoSrcID != _uvcVideoSourceID) {
         qCDebug(VideoManagerLog) << "UVC changed from [" << oldUvcVideoSrcID << "] to [" << _uvcVideoSourceID << "]";
-        if (!_uvcVideoSourceID.isEmpty()) {
-            UVCReceiver::checkPermission();
-        }
+        // if (!_uvcVideoSourceID.isEmpty()) {
+        //     UVCReceiver::checkPermission();
+        // }
         result = true;
         emit uvcVideoSourceIDChanged();
         emit isUvcChanged();

@@ -14,7 +14,6 @@
 #include <QtCore/QDir>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkDiskCache>
-#include <QtNetwork/QNetworkInformation>
 #include <QtNetwork/QNetworkProxy>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
 #include <QtLocation/private/qgeomaptype_p.h>
@@ -90,13 +89,7 @@ QGeoTiledMappingManagerEngineQGC::QGeoTiledMappingManagerEngineQGC(const QVarian
     });
 
     m_prefetchStyle = QGCDeviceInfo::isInternetAvailable() ? QGeoTiledMap::PrefetchTwoNeighbourLayers : QGeoTiledMap::NoPrefetching;
-    (void) connect(QNetworkInformation::instance(), &QNetworkInformation::reachabilityChanged, this, [this](QNetworkInformation::Reachability newReachability) {
-        if (newReachability == QNetworkInformation::Reachability::Online) {
-            m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
-        } else {
-            m_prefetchStyle = QGeoTiledMap::NoPrefetching;
-        }
-    });
+    m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
 
     Q_ASSERT(m_networkManager);
     QGeoTileFetcherQGC *tileFetcher = new QGeoTileFetcherQGC(m_networkManager, parameters, this);

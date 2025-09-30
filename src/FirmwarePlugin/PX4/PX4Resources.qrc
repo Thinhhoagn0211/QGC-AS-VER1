@@ -2,8 +2,6 @@
     <qresource prefix="/qml">
         <file alias="AirframeComponent.qml">../../AutoPilotPlugins/PX4/AirframeComponent.qml</file>
         <file alias="AirframeComponentSummary.qml">../../AutoPilotPlugins/PX4/AirframeComponentSummary.qml</file>
-        <file alias="CameraComponent.qml">../../AutoPilotPlugins/PX4/CameraComponent.qml</file>
-        <file alias="CameraComponentSummary.qml">../../AutoPilotPlugins/PX4/CameraComponentSummary.qml</file>
         <file alias="FlightModesComponentSummary.qml">../../AutoPilotPlugins/PX4/FlightModesComponentSummary.qml</file>
         <file alias="PowerComponent.qml">../../AutoPilotPlugins/PX4/PowerComponent.qml</file>
         <file alias="PowerComponentSummary.qml">../../AutoPilotPlugins/PX4/PowerComponentSummary.qml</file>
@@ -31,7 +29,6 @@
         <file alias="SensorsSetup.qml">../../AutoPilotPlugins/PX4/SensorsSetup.qml</file>
         <file alias="QGroundControl/PX4/qmldir">../../QmlControls/QGroundControl/PX4/qmldir</file>
         <file alias="QGroundControl/PX4/BatteryParams.qml">../../AutoPilotPlugins/PX4/BatteryParams.qml</file>
-        
     </qresource>
     <qresource prefix="/json">
         <file alias="PX4-MavCmdInfoCommon.json">PX4-MavCmdInfoCommon.json</file>
@@ -46,9 +43,6 @@
     </qresource>
     <qresource prefix="/FirmwarePlugin/PX4">
         <file alias="PX4ParameterFactMetaData.xml">PX4ParameterFactMetaData.xml</file>
-        <file alias="PX4MainStatusIndicatorContentItem.qml">PX4MainStatusIndicatorContentItem.qml</file>
-        <file alias="PX4FlightModeIndicator.qml">PX4FlightModeIndicator.qml</file>
-        <file alias="PX4BatteryIndicator.qml">PX4BatteryIndicator.qml</file>
         <file alias="PX4.OfflineEditing.params">V1.4.OfflineEditing.params</file>
     </qresource>
 </RCC>

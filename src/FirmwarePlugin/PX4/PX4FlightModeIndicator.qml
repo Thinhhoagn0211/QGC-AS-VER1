@@ -7,15 +7,17 @@
  *
  ****************************************************************************/
 
-import QtQuick 1.0
-import QtQuick.Controls 1.0
-import QtQuick.Layouts 1.0
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.2
 
 import QGroundControl 1.0
-import QGroundControl.Controls 1.0
-import QGroundControl.ScreenTools 1.0
-import QGroundControl.FactSystem 1.0
-import QGroundControl.FactControls 1.0
+import QGroundControl.Controls  1.0
+
+
+
+
+import QGroundControl.FactControls  1.0
 
 FlightModeIndicator {
     waitForParameters: true

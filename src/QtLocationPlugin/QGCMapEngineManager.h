@@ -10,7 +10,7 @@
 #pragma once
 
 #include <QtCore/QLoggingCategory>
-#include <QtQmlIntegration/QtQmlIntegration>
+
 
 #include "QGCTileSet.h"
 #include "QGCMapTasks.h"
@@ -23,10 +23,6 @@ class QmlObjectListModel;
 class QGCMapEngineManager : public QObject
 {
     Q_OBJECT
-    // QML_ELEMENT
-    // QML_UNCREATABLE("")
-    Q_MOC_INCLUDE("QmlObjectListModel.h")
-    Q_MOC_INCLUDE("QGCCachedTileSet.h")
     Q_PROPERTY(bool                 fetchElevation  MEMBER _fetchElevation                          NOTIFY fetchElevationChanged)
     Q_PROPERTY(bool                 importReplace   MEMBER _importReplace                           NOTIFY importReplaceChanged)
     Q_PROPERTY(ImportAction         importAction    READ importAction       WRITE setImportAction   NOTIFY importActionChanged)

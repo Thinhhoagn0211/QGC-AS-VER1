@@ -1,27 +1,16 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
 
-
 #include "GPSProvider.h"
 #include "QGCLoggingCategory.h"
-#include "QGCApplication.h"
-#include "SettingsManager.h"
+#include "RTCMMavlink.h"
 
-#define GPS_RECEIVE_TIMEOUT 1200
-
-#include <QDebug>
-
-#include "Drivers/src/ubx.h"
-#include "Drivers/src/sbf.h"
-#include "Drivers/src/ashtech.h"
-#include "Drivers/src/base_station.h"
-#include "definitions.h"
 #include <ashtech.h>
 #include <base_station.h>
 #include <definitions.h>
@@ -29,15 +18,11 @@
 #include <sbf.h>
 #include <ubx.h>
 
-
 #ifdef Q_OS_ANDROID
 #include "qserialport.h"
 #else
 #include <QtSerialPort/QSerialPort>
 #endif
-
-//#define SIMULATE_RTCM_OUTPUT //if defined, generate simulated RTCM messages
-                               //additionally make sure to call connectGPS(""), eg. from QGCToolbox.cc
 
 QGC_LOGGING_CATEGORY(GPSProviderLog, "qgc.gps.gpsprovider")
 QGC_LOGGING_CATEGORY(GPSDriversLog, "qgc.gps.drivers")
@@ -276,7 +261,7 @@ void GPSProvider::_sendRTCMData()
     const uint8_t* const fakeData = new uint8_t[fakeMsgLengths[2]];
     while (!_requestStop) {
         for (int i = 0; i < 3; ++i) {
-            const QByteArray message(reinterpret_cast<const char*>(fakeData), fakeMsgLengths[i]);
+            QByteArray message(reinterpret_cast<const char*>(fakeData), fakeMsgLengths[i]);
             rtcm->RTCMDataUpdate(message);
             msleep(4);
         }

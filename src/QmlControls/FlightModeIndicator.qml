@@ -7,14 +7,17 @@
  *
  ****************************************************************************/
 
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.2
 
 import QGroundControl 1.0
-import QGroundControl.Controls 1.0 
-import QGroundControl.ScreenTools 1.0
-import QGroundControl.FactControls 1.0
+import QGroundControl.Controls  1.0
+
+
+
+
+import QGroundControl.FactControls  1.0
 
 RowLayout {
     id:         control
@@ -233,11 +236,11 @@ RowLayout {
                     Layout.fillWidth:   true
                     label:              qsTr("Flight Modes")
                     buttonText:         qsTr("Configure")
-                    visible:            _activeVehicle.autopilot.knownVehicleComponentAvailable(_activeVehicle.autopilot.KnownFlightModesVehicleComponent) &&
+                    visible:            _activeVehicle.autopilotPlugin.knownVehicleComponentAvailable(AutoPilotPlugin.KnownFlightModesVehicleComponent) &&
                                             QGroundControl.corePlugin.showAdvancedUI
 
                     onClicked: {
-                        mainWindow.showKnownVehicleComponentConfigPage(_activeVehicle.autopilot.KnownFlightModesVehicleComponent)
+                        mainWindow.showKnownVehicleComponentConfigPage(AutoPilotPlugin.KnownFlightModesVehicleComponent)
                         mainWindow.closeIndicatorDrawer()
                     }
                 }

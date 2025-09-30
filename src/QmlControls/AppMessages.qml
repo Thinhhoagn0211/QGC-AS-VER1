@@ -7,24 +7,23 @@
  *
  ****************************************************************************/
 
-import QtQuick                  2.3
-import QtQuick.Controls         1.2
-import QtQuick.Controls.Styles  1.4
-import QtQuick.Dialogs          1.2
-import QtQuick.Layouts          1.12
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Layouts 1.2
 
-import QGroundControl               1.0
-import QGroundControl.Palette       1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.FactSystem    1.0
+import QGroundControl 1.0
+
+import QGroundControl.Controls  1.0
+
 import QGroundControl.FactControls  1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ScreenTools   1.0
+
+
 
 Item {
     id:         _root
 
-    property bool loaded: false
+    property bool listViewLoadCompleted: false
 
     Item {
         id:             panel
@@ -36,25 +35,12 @@ Item {
             anchors.margins: ScreenTools.defaultFontPixelWidth
             color:           qgcPal.window
 
-            Connections {
-                target: debugMessageModel
-
-                onDataChanged: {
-                    // Keep the view in sync if the button is checked
-                    if (loaded) {
-                        if (followTail.checked) {
-                            listview.positionViewAtEnd();
-                        }
-                    }
-                }
-            }
-
             Component {
                 id: delegateItem
                 Rectangle {
                     color:  index % 2 == 0 ? qgcPal.window : qgcPal.windowShade
                     height: Math.round(ScreenTools.defaultFontPixelHeight * 0.5 + field.height)
-                    width:  listview.width
+                    width:  listView.width
 
                     QGCLabel {
                         id:         field
@@ -67,27 +53,41 @@ Item {
             }
 
             QGCListView {
-                Component.onCompleted: {
-                    loaded = true
+                id:                     listView
+                anchors.top:            parent.top
+                anchors.left:           parent.left
+                anchors.right:          parent.right
+                anchors.bottom:         followTail.top
+                anchors.bottomMargin:   ScreenTools.defaultFontPixelWidth
+                clip:                   true
+                model:                  debugMessageModel
+                delegate:               delegateItem
+ 
+                function scrollToEnd() {
+                    if (listViewLoadCompleted) {
+                        if (followTail.checked) {
+                            listView.positionViewAtEnd();
+                        }
+                    }
                 }
-                anchors.top:     parent.top
-                anchors.left:    parent.left
-                anchors.right:   parent.right
-                anchors.bottom:  followTail.top
-                anchors.bottomMargin: ScreenTools.defaultFontPixelWidth
-                clip:            true
-                id:              listview
-                model:           debugMessageModel
-                delegate:        delegateItem
+
+                Component.onCompleted: {
+                    listViewLoadCompleted = true
+                    listView.scrollToEnd()
+                }
+
+                Connections {
+                    target:         debugMessageModel
+                    function onDataChanged(topLeft, bottomRight, roles) { listView.scrollToEnd() }
+                }
             }
 
             QGCFileDialog {
                 id:             writeDialog
                 folder:         QGroundControl.settingsManager.appSettings.logSavePath
                 nameFilters:    [qsTr("Log files (*.txt)"), qsTr("All Files (*)")]
-                selectExisting: false
                 title:          qsTr("Select log save file")
-                onAcceptedForSave: {
+                onAcceptedForSave: (file) => {
                     debugMessageModel.writeMessages(file);
                     visible = false;
                 }
@@ -95,8 +95,8 @@ Item {
 
             Connections {
                 target:          debugMessageModel
-                onWriteStarted:  writeButton.enabled = false;
-                onWriteFinished: writeButton.enabled = true;
+                function onWriteStarted() { writeButton.enabled = false }
+                function onWriteFinished(success) { writeButton.enabled = true }
             }
 
             QGCButton {
@@ -136,8 +136,8 @@ Item {
                 checked:                true
 
                 onCheckedChanged: {
-                    if (checked && loaded) {
-                        listview.positionViewAtEnd();
+                    if (checked && listViewLoadCompleted) {
+                        listView.positionViewAtEnd();
                     }
                 }
             }
@@ -157,7 +157,34 @@ Item {
 
         QGCPopupDialog {
             title:      qsTr("Logging categories")
-            buttons:    StandardButton.Close
+            buttons:    Dialog.Close
+
+            property int enabledCategoryCount: 0
+
+            function clearAllLogging() {
+                var logCategories = QGroundControl.loggingCategories()
+                for (var category of logCategories) {
+                    QGroundControl.setCategoryLoggingOn(category, false)
+                }
+                QGroundControl.updateLoggingFilterRules()
+                categoryRepeater.model = undefined
+                categoryRepeater.model = QGroundControl.loggingCategories()
+                enabledCategoryCount = 0
+                enabledCategoryRepeater.model = undefined
+                enabledCategoryRepeater.model = QGroundControl.loggingCategories()
+            }
+
+            function updateLoggingCategory(logCategory, checked, rebuildCategoryList) {
+                QGroundControl.setCategoryLoggingOn(logCategory, checked)
+                QGroundControl.updateLoggingFilterRules()
+                enabledCategoryCount = 0
+                enabledCategoryRepeater.model = undefined
+                enabledCategoryRepeater.model = QGroundControl.loggingCategories()
+                if (rebuildCategoryList) {
+                    categoryRepeater.model = undefined
+                    categoryRepeater.model = QGroundControl.loggingCategories()
+                }
+            }
 
             ColumnLayout {
                 RowLayout {
@@ -178,46 +205,47 @@ Item {
                     }
 
                     QGCButton {
-                        text: qsTr("Clear")
-                        onClicked: searchText.text = ""
+                        text:       qsTr("Clear")
+                        onClicked:  searchText.text = ""
                     }
                 }
 
-                Row {
-                    spacing:    ScreenTools.defaultFontPixelHeight / 2
+                ColumnLayout {
+                    spacing: ScreenTools.defaultFontPixelHeight / 2
+
+                    Repeater {
+                        id:     enabledCategoryRepeater
+                        model:  QGroundControl.loggingCategories()
+
+                        QGCCheckBox {
+                            text:       modelData
+                            visible:    QGroundControl.categoryLoggingOn(modelData)
+                            checked:    QGroundControl.categoryLoggingOn(modelData)
+                            onClicked:  updateLoggingCategory(modelData, checked, true /* rebuildCategoryList */)
+
+                            Component.onCompleted: enabledCategoryCount += checked ? 1 : 0
+                        }
+                    }
+
                     QGCButton {
-                        text: qsTr("Clear All")
-                        onClicked: categoryRepeater.setAllLogs(false)
+                        text:       qsTr("Clear All")
+                        visible:    enabledCategoryCount > 0
+                        onClicked:  clearAllLogging()
                     }
                 }
 
-                Column {
-                    id:         categoryColumn
-                    spacing:    ScreenTools.defaultFontPixelHeight / 2
+                ColumnLayout {
+                    spacing: ScreenTools.defaultFontPixelHeight / 2
 
                     Repeater {
                         id:     categoryRepeater
                         model:  QGroundControl.loggingCategories()
 
-                        function setAllLogs(value) {
-                            var logCategories = QGroundControl.loggingCategories()
-                            for (var category of logCategories) {
-                                QGroundControl.setCategoryLoggingOn(category, value)
-                            }
-                            QGroundControl.updateLoggingFilterRules()
-                            // Update model for repeater
-                            categoryRepeater.model = undefined
-                            categoryRepeater.model = QGroundControl.loggingCategories()
-                        }
-
                         QGCCheckBox {
                             text:       modelData
                             visible:    searchText.text ? text.match(`(${searchText.text})`, "i") : true
                             checked:    QGroundControl.categoryLoggingOn(modelData)
-                            onClicked:  {
-                                QGroundControl.setCategoryLoggingOn(modelData, checked)
-                                QGroundControl.updateLoggingFilterRules()
-                            }
+                            onClicked:  updateLoggingCategory(modelData, checked, false /* rebuildCategoryList */)
                         }
                     }
                 }

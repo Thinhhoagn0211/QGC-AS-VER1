@@ -1,12 +1,11 @@
 /****************************************************************************
  *
- * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
-
 
 #pragma once
 
@@ -17,10 +16,7 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 
-#include <atomic>
-
-#include "GPSPositionMessage.h"
-#include "Drivers/src/gps_helper.h"
+#include <gps_helper.h>
 #include "Settings/RTKSettings.h"
 
 #include "satellite_info.h"
@@ -28,11 +24,6 @@
 #include "sensor_gps.h"
 
 Q_DECLARE_LOGGING_CATEGORY(GPSProviderLog)
-
-/**
- ** class GPSProvider
- * opens a GPS device and handles the protocol
- */
 
 class QSerialPort;
 class GPSBaseStationSupport;

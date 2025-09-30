@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * (c) 2009-2022 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
+ * (c) 2009-2024 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
  * QGroundControl is licensed according to the terms in the file
  * COPYING.md in the root of the source code directory.
@@ -9,34 +9,37 @@
 
 #pragma once
 
-#include <QObject>
-#include <QDateTime>
-#include <QGeoPositionInfo>
+#include <QtCore/QObject>
+#include <QtCore/QDateTime>
+#include <QtCore/QLoggingCategory>
+#include <QtCore/QTimer>
+#include <QtPositioning/QGeoPositionInfo>
 
-#include "QGCLoggingCategory.h"
-#include "QGCMAVLink.h"
-#include "Vehicle.h"
+
+#include "MAVLinkLib.h"
 
 Q_DECLARE_LOGGING_CATEGORY(RemoteIDManagerLog)
 
 class RemoteIDSettings;
-class QGCPositionManager;
+class Vehicle;
 
 // Supporting Open Drone ID protocol
 class RemoteIDManager : public QObject
 {
     Q_OBJECT
-
+    
+    
 public:
     RemoteIDManager(Vehicle* vehicle);
 
-    Q_PROPERTY (bool    armStatusGood       READ armStatusGood      NOTIFY armStatusGoodChanged)
-    Q_PROPERTY (QString armStatusError      READ armStatusError     NOTIFY armStatusErrorChanged)
-    Q_PROPERTY (bool    commsGood           READ commsGood          NOTIFY commsGoodChanged)
-    Q_PROPERTY (bool    gcsGPSGood          READ gcsGPSGood         NOTIFY gcsGPSGoodChanged)
-    Q_PROPERTY (bool    basicIDGood         READ basicIDGood        NOTIFY basicIDGoodChanged)
-    Q_PROPERTY (bool    emergencyDeclared   READ emergencyDeclared  NOTIFY emergencyDeclaredChanged)
-    Q_PROPERTY (bool    operatorIDGood      READ operatorIDGood     NOTIFY operatorIDGoodChanged)
+    Q_PROPERTY(bool    available            READ available          NOTIFY availableChanged)             ///< true: the vehicle supports Mavlink Open Drone ID messages
+    Q_PROPERTY(bool    armStatusGood        READ armStatusGood      NOTIFY armStatusGoodChanged)
+    Q_PROPERTY(QString armStatusError       READ armStatusError     NOTIFY armStatusErrorChanged)
+    Q_PROPERTY(bool    commsGood            READ commsGood          NOTIFY commsGoodChanged)
+    Q_PROPERTY(bool    gcsGPSGood           READ gcsGPSGood         NOTIFY gcsGPSGoodChanged)
+    Q_PROPERTY(bool    basicIDGood          READ basicIDGood        NOTIFY basicIDGoodChanged)
+    Q_PROPERTY(bool    emergencyDeclared    READ emergencyDeclared  NOTIFY emergencyDeclaredChanged)
+    Q_PROPERTY(bool    operatorIDGood       READ operatorIDGood     NOTIFY operatorIDGoodChanged)
 
 
     Q_INVOKABLE void checkOperatorID(const QString& operatorID);
@@ -45,6 +48,7 @@ public:
     // Declare emergency
     Q_INVOKABLE void setEmergency(bool declare);
 
+    bool    available           (void) const { return _available; }
     bool    armStatusGood       (void) const { return _armStatusGood; }
     QString armStatusError      (void) const { return _armStatusError; }
     bool    commsGood           (void) const { return _commsGood; }
@@ -67,6 +71,7 @@ public:
     };
 
 signals:
+    void availableChanged();
     void armStatusGoodChanged();
     void armStatusErrorChanged();
     void commsGoodChanged();
@@ -101,12 +106,11 @@ private:
     bool _isEUOperatorIDValid(const QString& operatorID) const;
     QChar _calculateLuhnMod36(const QString& input) const;
 
-    MAVLinkProtocol*    _mavlink;
     Vehicle*            _vehicle;
     RemoteIDSettings*   _settings;
-    QGCPositionManager* _positionManager;
 
     // Flags ODID
+    bool    _available = false;
     bool    _armStatusGood;
     QString _armStatusError;
     bool    _commsGood;

@@ -8,14 +8,15 @@
  ****************************************************************************/
 
 import QtQuick 2.4
-import QtQuick.Controls 2.4
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.2
-import Qt.labs.animation 1.0
+import Qt.labs.animation
 
 import QGroundControl 1.0
-import QGroundControl.ScreenTools 1.0
-import QGroundControl.Palette 1.0
-import QGroundControl.Controls 1.0
+import QGroundControl.Controls  1.0
+
+
+
 
 
 Control {
@@ -149,11 +150,11 @@ Control {
 
     // This TapHandler ensures that the slider captures touch and click events,
     // preventing them from passing through to the underlying map.
-    // TapHandler {
-    //     acceptedButtons: Qt.AllButtons
-    //     onTapped: control.forceActiveFocus()
-    //     grabPermissions: PointerHandler.CanTakeOverFromAnything
-    // }
+    TapHandler {
+        acceptedButtons: Qt.AllButtons
+        onTapped: control.forceActiveFocus()
+        grabPermissions: PointerHandler.CanTakeOverFromAnything
+    }
 
     background: Item {
         implicitHeight: _majorTickSize + tickValueMargin + ScreenTools.defaultFontPixelHeight + labelOffset
@@ -168,16 +169,16 @@ Control {
             width:  _sliderContentSize
             height: background.height - y
 
-            // onXChanged: {
-            //     if (dragHandler.active) {
-            //         value = _sliderXPosToValue(x)
-            //     }
-            // }
+            onXChanged: {
+                if (dragHandler.active) {
+                    value = _sliderXPosToValue(x)
+                }
+            }
 
-            // DragHandler {
-            //     id:             dragHandler
-            //     yAxis.enabled:  false
-            // }
+            DragHandler {
+                id:             dragHandler
+                yAxis.enabled:  false
+            }
 
             BoundaryRule on x {
                 minimum: _valueToSliderXPos(to)
